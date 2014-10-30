@@ -1,0 +1,165 @@
+{
+
+  "id": "index",
+
+  "ambiguate-properties": false,
+
+  "checks": {
+    "nonStandardJsDocs": "OFF",
+    "checkDebuggerStatement": "WARNING",
+    "accessControls": "ERROR",
+    "ambiguousFunctionDecl": "ERROR",
+    "checkRegExp": "ERROR",
+    "checkTypes": "ERROR",
+    "checkVars": "ERROR",
+    "const": "ERROR",
+    "constantProperty": "ERROR",
+    "deprecated": "ERROR",
+    "duplicate": "ERROR",
+    "duplicateMessage": "ERROR",
+    "es5Strict": "ERROR",
+    "externsValidation": "ERROR",
+    "fileoverviewTags": "ERROR",
+    "globalThis": "ERROR",
+    "internetExplorerChecks": "ERROR",
+    "invalidCasts": "ERROR",
+    "missingProperties": "ERROR",
+    "strictModuleDepCheck": "ERROR",
+    "typeInvalidation": "ERROR",
+    "undefinedNames": "ERROR",
+    "undefinedVars": "ERROR",
+    "unknownDefines": "ERROR",
+    "uselessCode": "ERROR",
+    "visibility": "ERROR"
+  },
+  
+  "closure-library": "../../bower_components/closure-library/closure/goog",
+
+  "css-allowed-unrecognized-properties": [
+    "user-select"
+  ],
+
+  "css-inputs": [
+  ],
+
+  "css-output-file": "../public/index.css",
+  
+  "custom-externs-only": true,
+
+  "define": {
+    "goog.DEBUG": false,
+    "goog.LOCALE": "cs",
+    "goog.asserts.ENABLE_ASSERTS": false,
+    "goog.dom.ASSUME_STANDARDS_MODE": true
+  },
+
+  "disambiguate-properties": true,
+
+  "experimental-compiler-options": {
+    "languageIn": "ECMASCRIPT5"
+  },
+
+
+  "externs": [
+    "//json.js",
+    "../../bower_components/ol3/externs/olx.js",
+    "../../bower_components/ol3/externs/bingmaps.js",
+    "../../bower_components/ol3/externs/closure-compiler.js",
+    "../../bower_components/ol3/externs/geojson.js",
+    "../../bower_components/ol3/externs/topojson.js",
+    "../../bower_components/ol3/externs/oli.js",
+    "../../bower_components/ol3/externs/proj4js.js",
+    "../../bower_components/ol3/externs/tilejson.js",
+    "../../bower_components/closure-compiler-src/contrib/externs/jquery-1.9.js",
+    "../../bower_components/closure-compiler-src/externs/es3.js",
+    "../../bower_components/closure-compiler-src/externs/es5.js",
+    "../../bower_components/closure-compiler-src/externs/fileapi.js",
+    "../../bower_components/closure-compiler-src/externs/gecko_css.js",
+    "../../bower_components/closure-compiler-src/externs/gecko_dom.js",
+    "../../bower_components/closure-compiler-src/externs/gecko_event.js",
+    "../../bower_components/closure-compiler-src/externs/gecko_xml.js",
+    "../../bower_components/closure-compiler-src/externs/ie_css.js",
+    "../../bower_components/closure-compiler-src/externs/ie_dom.js",
+    "../../bower_components/closure-compiler-src/externs/ie_event.js",
+    "../../bower_components/closure-compiler-src/externs/iphone.js",
+    "../../bower_components/closure-compiler-src/externs/html5.js",
+    "../../bower_components/closure-compiler-src/externs/w3c_anim_timing.js",
+    "../../bower_components/closure-compiler-src/externs/w3c_css.js",
+    "../../bower_components/closure-compiler-src/externs/w3c_device_sensor_event.js",
+    "../../bower_components/closure-compiler-src/externs/w3c_dom1.js",
+    "../../bower_components/closure-compiler-src/externs/w3c_dom2.js",
+    "../../bower_components/closure-compiler-src/externs/w3c_dom3.js",
+    "../../bower_components/closure-compiler-src/externs/w3c_elementtraversal.js",
+    "../../bower_components/closure-compiler-src/externs/w3c_event.js",
+    "../../bower_components/closure-compiler-src/externs/w3c_geolocation.js",
+    "../../bower_components/closure-compiler-src/externs/w3c_range.js",
+    "../../bower_components/closure-compiler-src/externs/w3c_xml.js",
+    "../../bower_components/closure-compiler-src/externs/webgl.js",
+    "../../bower_components/closure-compiler-src/externs/webkit_dom.js",
+    "../../bower_components/closure-compiler-src/externs/webkit_event.js",
+    "../../bower_components/closure-compiler-src/externs/webstorage.js",
+    "../../bower_components/closure-compiler-src/externs/window.js"
+  ],
+
+  "inputs": [
+    "js/pages/index/main.js"
+  ],
+
+  "level": "VERBOSE",
+
+  "mode": "ADVANCED",
+  
+  "name-suffixes-to-strip": [
+    "logger",
+    "logger_"
+  ],
+
+  "paths": [
+    "../../bower_components/closure-library/third_party/closure/goog/mochikit",
+    "../../bower_components/ol3/src",
+    "js"
+  ],
+  
+  "treat-warnings-as-errors": true,
+
+  "type-prefixes-to-strip": [
+    "goog.debug.Console",
+    "goog.debug.DebugWindow",
+    "goog.debug.DevCss",
+    "goog.debug.DivConsole",
+    "goog.debug.EntryPointMonitor",
+    "goog.debug.ErrorHandler",
+    "goog.debug.ErrorReporter",
+    "goog.debug.FancyWindow",
+    "goog.debug.Formatter",
+    "goog.debug.FpsDisplay",
+    "goog.debug.GcDiagnostics",
+    "goog.debug.HtmlFormatter",
+    "goog.debug.LogBuffer",
+    "goog.debug.LogManager",
+    "goog.debug.LogRecord",
+    "goog.debug.Logger",
+    "goog.debug.RelativeTimeProvider",
+    "goog.debug.TextFormatter",
+    "goog.debug.Trace",
+    "goog.debug.catchErrors",
+    "goog.debug.deepExpose",
+    "goog.debug.enhanceError",
+    "goog.debug.entryPointRegistry",
+    "goog.debug.errorHandlerWeakDep",
+    "goog.debug.expose",
+    "goog.debug.exposeArray",
+    "goog.debug.exposeException",
+    "goog.debug.getFunctionName",
+    "goog.debug.getStacktrace",
+    "goog.debug.getStacktraceSimple",
+    "goog.debug.logRecordSerializer",
+    "goog.debug.makeWhitespaceVisible",
+    "goog.debug.normalizeErrorObject",
+    "goog.debug.reflect",
+    "goog.log"
+  ]
+
+}
+
+

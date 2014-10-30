@@ -1,0 +1,14 @@
+{
+  "name": "kompas",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "closure-compiler": "http://dl.google.com/closure-compiler/compiler-latest.zip",
+    "closure-compiler-src": "git://github.com/google/closure-compiler.git#v20140508",
+    "closure-externs": "git://github.com/jirik/closure-externs",
+    "closure-library": "svn+https://projekty.ics.muni.cz/gis/svn/closure-library#v2014-04-11",
+    "ol3": "git://github.com/openlayers/ol3.git#v3.0.0",
+    "plovr": "https://plovr.googlecode.com/files/plovr-81ed862.jar",
+    "proj4js": "http://download.osgeo.org/proj4js/proj4js-1.1.0.zip"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "name": "ol3ds",
+  "version": "0.0.1",
+  "repository": {
+    "type": "svn",
+    "url": "https://test"
+  },
+  "engines": {
+    "node": ">= 0.6.0"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-bg-shell": "^2.3.1",
+    "grunt-contrib-clean": "^0.5.0",
+    "grunt-contrib-copy": "^0.5.0",
+    "grunt-contrib-nodeunit": "~0.1.2",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-curl": "^2.0.2",
+    "grunt-express-server": "^0.4.17",
+    "grunt-open": "^0.2.3",
+    "grunt-shell": "^0.7.0",
+    "load-grunt-tasks": "^0.4.0",
+    "request": "^2.34.0",
+    "request.pipe": "0.0.2"
+  },
+  "keywords": [
+    "grunt-express",
+    "example"
+  ],
+  "dependencies": {
+    "express": "~3.1.0",
+    "fs-extra": "^0.10.0",
+    "grunt-contrib-nodeunit": "~0.1.2"
+  }
+}
