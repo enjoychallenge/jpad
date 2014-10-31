@@ -60,6 +60,11 @@ module.exports = function(grunt) {
       my: {
         files: publBowerFiles
       }
+    },
+    open: {
+      build: {
+        path: 'http://localhost:9000/client/public/'
+      }
     }
   });
 
@@ -195,6 +200,6 @@ module.exports = function(grunt) {
   
   
   grunt.registerTask('updatePublic', ['clean:build', 'copy:fromBower', 'copy:fromSrc', 'createPublicHtml:my']);
-  grunt.registerTask('build', ['updatePublic', 'shell:buildUsingPlovr', 'updatePathsInPublicCss']);
+  grunt.registerTask('build', ['updatePublic', 'shell:buildUsingPlovr', 'updatePathsInPublicCss', 'open:build']);
 
 };
