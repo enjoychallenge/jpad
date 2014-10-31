@@ -41,7 +41,7 @@ module.exports = function(grunt) {
   
 
   
-  grunt.registerTask('default', ['serve']);
+  grunt.registerTask('default', ['dev']);
 
 };
 
