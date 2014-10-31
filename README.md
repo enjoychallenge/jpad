@@ -10,8 +10,8 @@ This repository is not officially supported by Google, ol3, or individual module
 * [node.js](http://nodejs.org/download/) (32bit or 64bit; must correspond with Python 2.7 because of node-gyp)
 * Windows users:
   because of [node-gyp](https://github.com/TooTallNate/node-gyp) you will probably need to install [Microsoft Visual Studio C++ 2012 Express for Windows Desktop](http://www.microsoft.com/en-us/download/details.aspx?id=34673) before Installation
-* grunt `npm install -g grunt-cli`
-* bower `npm install -g bower`
+* [grunt](http://gruntjs.com/) `npm install -g grunt-cli`
+* [bower](http://bower.io/) `npm install -g bower`
 
 ## Installation
 ```
@@ -22,7 +22,7 @@ sudo grunt install (Linux) / grunt install (Windows)
 
 ## Development
 * `grunt`
-* Edit content `client/src`, e.g. `client/src/js/webpages/index.js` and see changes in the browser
+* Edit content of `client/src` (e.g. `client/src/js/webpages/index.js`) and see changes in the browser
 
 ## Build
 * `grunt build`
