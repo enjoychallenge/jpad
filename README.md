@@ -5,35 +5,25 @@
 This repository is not officially supported by Google, ol3, or individual module authors.
 
 ## Requirements
-* Python 2.7 (32bit or 64bit; must correspond with node.js because of node-gyp)
+* [Python 2.7](https://www.python.org/downloads/) (32bit or 64bit; must correspond with node.js because of node-gyp)
+  * Windows users: `path/to/python/directory` and `path/to/python/directory/Scripts` must be in your PATH system variable
+* [node.js](http://nodejs.org/download/) (32bit or 64bit; must correspond with Python 2.7 because of node-gyp)
 * Windows users:
-  path/to/python/directory
-    and
-  path/to/python/directory/Scripts
-    must be in your PATH system variable
-* node.js (32bit or 64bit; must correspond with Python 2.7 because of node-gyp)
-* Windows users:
-  because of node-gyp
-    https://github.com/TooTallNate/node-gyp
-  you will probably need to install following apps before Installation:
-  * Microsoft Visual Studio C++ 2012 Express for Windows Desktop
-* grunt
-  to install, run
-    `npm install -g grunt-cli`
-* bower
-  to install, run
-    `npm install -g bower`
+  because of [node-gyp](https://github.com/TooTallNate/node-gyp) you will probably need to install [Microsoft Visual Studio C++ 2012 Express for Windows Desktop](http://www.microsoft.com/en-us/download/details.aspx?id=34673) before Installation
+* grunt `npm install -g grunt-cli`
+* bower `npm install -g bower`
 
--- Installation --
+## Installation
 ```
 npm install
 bower install
 sudo grunt install (Linux) / grunt install (Windows)
 ```
 
--- Develop --
-`grunt`
+## Development
+* `grunt`
+* Edit content `client/src`, e.g. `client/src/js/webpages/index.js` and see changes in the browser
 
--- Build --
-`grunt build`
+## Build
+* `grunt build`
 
