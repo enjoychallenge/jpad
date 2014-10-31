@@ -1,5 +1,10 @@
+# ol3 dev stack
 
--- Requirements --
+[ol3](ol3js.org) & [Google Closure](https://developers.google.com/closure/) devstack ready for [advanced optimizations](https://developers.google.com/closure/compiler/docs/compilation_levels)
+
+This repository is not officially supported by Google, ol3, or individual module authors.
+
+## Requirements
 * Python 2.7 (32bit or 64bit; must correspond with node.js because of node-gyp)
 * Windows users:
   path/to/python/directory
@@ -14,19 +19,21 @@
   * Microsoft Visual Studio C++ 2012 Express for Windows Desktop
 * grunt
   to install, run
-    npm install -g grunt-cli
+    `npm install -g grunt-cli`
 * bower
   to install, run
-    npm install -g bower
+    `npm install -g bower`
 
 -- Installation --
+```
 npm install
 bower install
 sudo grunt install (Linux) / grunt install (Windows)
+```
 
 -- Develop --
-grunt
+`grunt`
 
 -- Build --
-grunt build
+`grunt build`
 
