@@ -1,6 +1,6 @@
 # ol3 devstack
 
-[ol3](ol3js.org) & [Google Closure](https://developers.google.com/closure/) devstack ready for [advanced optimizations](https://developers.google.com/closure/compiler/docs/compilation_levels)
+[ol3](ol3js.org) & [Google Closure](https://developers.google.com/closure/) devstack ready for [advanced optimizations](https://developers.google.com/closure/compiler/docs/compilation_levels) using [plovr](http://plovr.com/)
 
 This repository is not officially supported by Google, ol3, or individual module authors.
 
