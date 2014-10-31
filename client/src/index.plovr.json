@@ -102,7 +102,7 @@
   ],
 
   "inputs": [
-    "js/pages/index/main.js"
+    "js/webpages/index.js"
   ],
 
   "level": "VERBOSE",
