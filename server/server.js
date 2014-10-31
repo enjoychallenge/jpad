@@ -6,17 +6,10 @@ var grunt = require('grunt');
 
 var express = require('express');
 var app = express();
-var server = require('http').createServer(app);
 var fs = require("fs");
-
-var request = require('request');
-
 
 var plovrVars = require('./../tasks/util/get-plovr-vars.js');
 var plovrIds = plovrVars.plovrIds;
-
-// use livereload middleware
-//app.use(require('grunt-contrib-livereload/lib/utils').livereloadSnippet);
 
 app.use('/client/src/', function(req, res, next) {
   var filePath = 'client/src/' + req.path;
