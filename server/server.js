@@ -7,7 +7,6 @@ var grunt = require('grunt');
 var express = require('express');
 var app = express();
 var fs = require("fs");
-var request = require('request');
 
 var plovrVars = require('./../tasks/util/get-plovr-vars.js');
 var plovrIds = plovrVars.plovrIds;
