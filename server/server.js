@@ -7,13 +7,24 @@ var grunt = require('grunt');
 var express = require('express');
 var app = express();
 var fs = require("fs");
+var request = require('request');
 
 var plovrVars = require('./../tasks/util/get-plovr-vars.js');
 var plovrIds = plovrVars.plovrIds;
 
+app.use('/kleo', function(req, res) {
+  var url = 'http://kleopatra.ics.muni.cz:80' + req.url;
+  req.pipe(request(url)).pipe(res);
+});
+
+
 app.use('/client/src/', function(req, res, next) {
-  var filePath = 'client/src/' + req.path;
-  if(goog.string.endsWith(req.path, '.html') && fs.existsSync(filePath)) {
+  var filePath = req.path;
+  if(goog.string.endsWith(filePath, '/')) {
+    filePath = filePath + 'index.html';
+  }
+  filePath = 'client/src' + filePath;
+  if(goog.string.endsWith(filePath, '.html') && fs.existsSync(filePath)) {
     var cnt = fs.readFileSync(filePath);
     cnt += "";
     cnt = cnt.replace(/^(.*<link.* href=['"])([^'"]+)(['"].*\/(link)?>.*$)/gmi,
