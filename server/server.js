@@ -12,12 +12,6 @@ var request = require('request');
 var plovrVars = require('./../tasks/util/get-plovr-vars.js');
 var plovrIds = plovrVars.plovrIds;
 
-app.use('/kleo', function(req, res) {
-  var url = 'http://kleopatra.ics.muni.cz:80' + req.url;
-  req.pipe(request(url)).pipe(res);
-});
-
-
 app.use('/client/src/', function(req, res, next) {
   var filePath = req.path;
   if(goog.string.endsWith(filePath, '/')) {
