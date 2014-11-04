@@ -2,6 +2,7 @@
 require('./../../bower_components/closure-library/closure/goog/bootstrap/nodejs');
 goog.require('goog.array');
 var grunt = require('grunt');
+var path = require('path');
 
 
 
