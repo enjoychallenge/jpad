@@ -5,6 +5,8 @@
 This repository is not officially supported by Google, ol3, or individual module authors.
 
 ## Requirements
+* [git](http://git-scm.com/downloads)
+  * Windows users: `path/to/directory/with/git.exe` must be in your PATH system variable
 * [Python 2.7](https://www.python.org/downloads/) (32bit or 64bit; must correspond with node.js because of node-gyp)
   * Windows users: `path/to/python/directory` and `path/to/python/directory/Scripts` must be in your PATH system variable
 * [node.js](http://nodejs.org/download/) (32bit or 64bit; must correspond with Python 2.7 because of node-gyp)
@@ -15,6 +17,8 @@ This repository is not officially supported by Google, ol3, or individual module
 
 ## Installation
 ```
+git clone https://github.com/jirik/ol3ds.git
+cd ol3ds
 npm install
 bower install
 sudo grunt install (Linux) / grunt install (Windows)
