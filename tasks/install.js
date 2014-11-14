@@ -48,6 +48,18 @@ module.exports = function(grunt) {
           "    throw Error('unsupported layout: ' + layout);"
           );
       grunt.file.write(path, cnt);
+      
+      path = 'bower_components/ol3/src/ol/map.js';
+      cnt = grunt.file.read(path);
+      cnt = cnt.replace(
+          "// FIXME recheck layer/map projection compatability when projection changes",
+          "/**\n" +
+          " * @license OpenLayers 3. See http://openlayers.org/\n" +
+          " * License: https://raw.githubusercontent.com/openlayers/ol3/master/LICENSE.md\n" +
+          " * Version: v3.0.0\n" +
+          " */\n"
+          );
+      grunt.file.write(path, cnt);
     }
   );
 
