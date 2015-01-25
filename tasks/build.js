@@ -35,7 +35,7 @@ module.exports = function(grunt) {
 
   grunt.config.merge({
     clean: {
-      build: ["client/public"],
+      build: ["client/public"]
     },
     copy: {
       fromBower: {
@@ -48,10 +48,14 @@ module.exports = function(grunt) {
     shell: {
       buildUsingPlovr: {
         command: goog.array.map(prodPlovrConfigs, function(pth) {
+          var useMap = grunt.option('map');
           var dst = pth.replace('client/src/', 'client/public/');
           dst = dst.replace('.plovr.json', '.js');
-          var result = 'java -jar bower_components/plovr/index.jar build ' +
-              pth + ' > ' + dst;
+          var result = 'java -jar bower_components/plovr/index.jar build ';
+          if(useMap) {
+            result += '--create_source_map ' + dst + '.map ';
+          }
+          result += pth + ' > ' + dst;
           return result;
         }).join('&')
       }
@@ -70,7 +74,22 @@ module.exports = function(grunt) {
 
   require('load-grunt-tasks')(grunt);
 
-  
+
+  grunt.registerTask(
+      'addSourceMapUrl',
+      'Add source map URL if map option is true.',
+      function() {
+        goog.array.forEach(prodPlovrConfigs, function(pth) {
+          var dst = pth.replace('client/src/', 'client/public/');
+          dst = dst.replace('.plovr.json', '.js');
+          var cnt = grunt.file.read(dst);
+          cnt += '//# sourceMappingURL='+path.basename(dst)+'.map';
+          grunt.file.write(dst, cnt);
+        });
+      }
+  );
+
+
   grunt.registerMultiTask(
     'createPublicHtml',
     'Creating client/public/**/*.html',
@@ -200,6 +219,16 @@ module.exports = function(grunt) {
   
   
   grunt.registerTask('updatePublic', ['clean:build', 'copy:fromBower', 'copy:fromSrc', 'createPublicHtml:my']);
-  grunt.registerTask('build', ['updatePublic', 'shell:buildUsingPlovr', 'updatePathsInPublicCss', 'open:build']);
+var buildTasks = [
+    'updatePublic',
+    'shell:buildUsingPlovr',
+    'updatePathsInPublicCss',
+    'open:build'
+  ];
+  var useMap = grunt.option('map');
+  if (useMap) {
+    buildTasks.push('addSourceMapUrl');
+  }
+  grunt.registerTask('build', buildTasks);
 
 };
