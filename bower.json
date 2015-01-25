@@ -5,9 +5,9 @@
   "dependencies": {
     "closure-compiler": "http://dl.google.com/closure-compiler/compiler-latest.zip",
     "closure-compiler-src": "git://github.com/google/closure-compiler.git#v20140508",
-    "closure-externs": "git://github.com/jirik/closure-externs",
-    "closure-library": "git://github.com/jirik/closure-library#f1fe5a3dba455488fb71cd0d14ca98dc61f3fad2",
-    "ol3": "git://github.com/openlayers/ol3.git#v3.0.0",
+    "closure-externs": "git://github.com/jirik/closure-externs#d6ce2ca54dc63bd5a484aa3f697cedf229128ab9",
+    "closure-library": "git://github.com/jirik/closure-library#40c5bf3598372e6c23321021456f41a5c1a6f9ce",
+    "ol3": "git://github.com/jirik/ol3.git#f2297c893a2d60db2f1a4843087e5797104e3413",
     "plovr": "https://plovr.googlecode.com/files/plovr-81ed862.jar",
     "proj4js": "http://download.osgeo.org/proj4js/proj4js-1.1.0.zip"
   }
