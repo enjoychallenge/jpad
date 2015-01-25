@@ -115,6 +115,7 @@
   ],
 
   "paths": [
+    "../../bower_components/ol3/build/ol.ext",
     "../../bower_components/closure-library/third_party/closure/goog/mochikit",
     "../../bower_components/ol3/src",
     "js"
