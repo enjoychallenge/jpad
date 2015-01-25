@@ -26,8 +26,9 @@ sudo grunt install (Linux) / grunt install (Windows)
 
 ## Development
 * `grunt`
-* Edit content of `client/src` (e.g. `client/src/js/webpages/index.js`) and see changes in the browser
+* Edit content of `client/src/js/webpages/index.js` and see changes in the browser
 
 ## Build
-* `grunt build`
+* `grunt build` to compile the code and copy files to `client/src`
+* `grunt build --map` to include also [source maps](https://developer.chrome.com/devtools/docs/javascript-debugging#source-maps)
 
