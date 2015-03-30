@@ -3,8 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "closure-compiler": "http://dl.google.com/closure-compiler/compiler-latest.zip",
-    "closure-compiler-src": "git://github.com/google/closure-compiler.git#v20140508",
+    "closure-compiler-src": "git://github.com/google/closure-compiler.git#v20141215",
     "closure-externs": "git://github.com/jirik/closure-externs#d6ce2ca54dc63bd5a484aa3f697cedf229128ab9",
     "closure-library": "git://github.com/google/closure-library#567c440d2c7f2601c970ce40bc650ad2044a77d2",
     "ol3": "git://github.com/jirik/ol3.git#51110d07b975d6a82185ad11c16f9fbead97e006",
