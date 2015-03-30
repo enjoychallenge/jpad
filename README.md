@@ -30,7 +30,7 @@ Windows users: If you have some errors during `npm install` related to [node-gyp
 
 ## Development
 * `grunt` to run dev server and open Hello World in the browser
-* Edit content of `client/src/js/webpages/index.js` and see changes in the browser
+  * Edit content of `client/src/js/webpages/index.js` and see changes in the browser
 * `grunt lint` to run gjslint
 * `grunt fix` to run fixjsstyle
 
