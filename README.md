@@ -1,6 +1,8 @@
 # ol3 devstack
 
-[OpenLayers 3](ol3js.org) & [Google Closure](https://developers.google.com/closure/) devstack ready for [advanced optimizations](https://developers.google.com/closure/compiler/docs/compilation_levels) using [plovr](https://github.com/bolinfest/plovr). Moreover [fixjsstyle and gjslint](https://developers.google.com/closure/utilities/docs/linter_howto) are also included. Both Linux and Windows friendly.
+* [OpenLayers 3](ol3js.org) & [Google Closure](https://developers.google.com/closure/) devstack ready for [advanced optimizations](https://developers.google.com/closure/compiler/docs/compilation_levels) using [plovr](https://github.com/bolinfest/plovr)
+* [fixjsstyle and gjslint](https://developers.google.com/closure/utilities/docs/linter_howto) included
+* both Linux and Windows friendly
 
 Current versions:
 * [OpenLayers](ol3js.org) v3.4.0
