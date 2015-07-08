@@ -13,8 +13,7 @@ app.wp.index = function() {
 
   var raster = new ol.layer.Tile({
     source: new ol.source.OSM({
-      crossOrigin: null,
-      url: 'http://{a-c}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png'
+      crossOrigin: null
     })
   });
 
