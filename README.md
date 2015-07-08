@@ -5,7 +5,7 @@
 * both Linux and Windows friendly
 
 Current versions:
-* [OpenLayers](http://openlayers.org) v3.5.0
+* [OpenLayers](http://openlayers.org) v3.7.0
 * [Closure Library](https://github.com/google/closure-library) [v2015-02-18] (https://github.com/google/closure-library/tree/567c440d2c7f2601c970ce40bc650ad2044a77d2)
 * [plovr](https://github.com/bolinfest/plovr) 2.0.0
 
