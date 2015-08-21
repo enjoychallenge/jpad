@@ -7,11 +7,11 @@ var path = require('path');
 
 
 // array of paths to plovr config files
-var plovrConfigs = grunt.file.expand('client/src/**/*.plovr.json');
+var plovrConfigs = grunt.file.expand('src/client/**/*.plovr.json');
 
 // array of paths to plovr production config files
-var prodPlovrConfigs = grunt.file.expand(['client/src/**/*.plovr.json',
-    '!client/src/**/*-debug.plovr.json']);
+var prodPlovrConfigs = grunt.file.expand(['src/client/**/*.plovr.json',
+    '!src/client/**/*.debug.plovr.json']);
 
 // object (plovrId: path to plovr config files)
 var plovrIds = {};

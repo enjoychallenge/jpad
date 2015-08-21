@@ -35,7 +35,7 @@ module.exports = function(grunt) {
 
   grunt.config.merge({
     clean: {
-      build: ["client/public"]
+      build: ["build/client"]
     },
     copy: {
       fromBower: {
@@ -49,7 +49,7 @@ module.exports = function(grunt) {
       buildUsingPlovr: {
         command: goog.array.map(prodPlovrConfigs, function(pth) {
           var useMap = grunt.option('map');
-          var dst = pth.replace('client/src/', 'client/public/');
+          var dst = pth.replace('src/client/', 'build/client/');
           dst = dst.replace('.plovr.json', '.js');
           var result = 'java -jar bower_components/plovr/index.jar build ';
           if(useMap) {
@@ -60,14 +60,14 @@ module.exports = function(grunt) {
         }).join('&')
       }
     },
-    createPublicHtml: {
+    createBuildHtml: {
       my: {
         files: publBowerFiles
       }
     },
     open: {
       build: {
-        path: 'http://localhost:9000/client/public/'
+        path: 'http://localhost:9000/build/client/'
       }
     }
   });
@@ -80,7 +80,7 @@ module.exports = function(grunt) {
       'Add source map URL if map option is true.',
       function() {
         goog.array.forEach(prodPlovrConfigs, function(pth) {
-          var dst = pth.replace('client/src/', 'client/public/');
+          var dst = pth.replace('src/client/', 'build/client/');
           dst = dst.replace('.plovr.json', '.js');
           var cnt = grunt.file.read(dst);
           cnt += '//# sourceMappingURL='+path.basename(dst)+'.map';
@@ -91,8 +91,8 @@ module.exports = function(grunt) {
 
 
   grunt.registerMultiTask(
-    'createPublicHtml',
-    'Creating client/public/**/*.html',
+    'createBuildHtml',
+    'Creating build/client/**/*.html',
     function() {
       
       //taken from grunt-contrib-copy
@@ -112,7 +112,7 @@ module.exports = function(grunt) {
           }
           urlsToReplace.push({
             src: src,
-            dest: path.relative('client/public/', dest)
+            dest: path.relative('build/client/', dest)
           });
         });
       });
@@ -124,11 +124,16 @@ module.exports = function(grunt) {
         });
       };
       
-      var htmls = grunt.file.expand('client/src/**/*.html');
+      var absBuildPath = path.resolve('.', 'build/');
+      var absSrcPath = path.resolve('.', 'src/');
+      var htmls = grunt.file.expand('src/client/**/*.html');
       
       goog.array.forEach(htmls, function(htmlPath) {
         var cnt = grunt.file.read(htmlPath);
-        var pathPrefix = path.relative('client/src/', path.dirname(htmlPath));
+        var pathPrefix = path.relative('src/client/', path.dirname(htmlPath));
+        var absHtmlPath = path.resolve('.', htmlPath);
+        var htmlRelPath = path.relative(absSrcPath, absHtmlPath);
+        var absBuildHtmlPath = path.join(absBuildPath, htmlRelPath);
         var urlToReplace;
         cnt = cnt.replace(/^(.*<(link|script).* (?:src|href)=['"])([^'"]+)(['"].*\/(\2)?>.*$)/gmi,
             function(match, prefix, tag, url, postfix) {
@@ -138,9 +143,15 @@ module.exports = function(grunt) {
                 if(goog.string.caseInsensitiveEndsWith(plovrId, '-debug')) {
                   plovrId = plovrId.substring(0, plovrId.length-6);
                 }
-                var plovrConfig = grunt.file.readJSON(plovrIds[plovrId]);
+                var plovrConfigPath = plovrIds[plovrId];
+                var plovrConfig = grunt.file.readJSON(plovrConfigPath);
                 var dstCss = plovrConfig['css-output-file'];
-                dstCss = dstCss.replace('../public/', '');
+                plovrConfigPath = path.resolve('.', plovrConfigPath);
+                var plovrConfigDir = path.dirname(plovrConfigPath);
+                var absCssPath = path.resolve(plovrConfigDir, dstCss);
+                dstCss = path.relative(path.dirname(absBuildHtmlPath),
+                    absCssPath);
+                dstCss = dstCss.replace(/\\/g,"/");
                 var result = prefix + dstCss + postfix;
               // plovr-compiled JS
               } else if (url.indexOf('http://localhost:9810/compile?')==0) {
@@ -152,7 +163,7 @@ module.exports = function(grunt) {
                 dstJs = path.basename(dstJs, '.plovr.json')+'.js';
                 result = prefix + dstJs + postfix;
               // plovr.css
-              } else if(goog.string.endsWith(url, 'css/plovr.css')) {
+              } else if(goog.string.endsWith(url, 'plovr.css')) {
                 result = '';
               // references to bower_components
               } else if((urlToReplace = findPathToReplace(url))) {
@@ -164,13 +175,13 @@ module.exports = function(grunt) {
               }
               return result;
             });
-        var dst = htmlPath.replace('client/src/', 'client/public/');
+        var dst = htmlPath.replace('src/client/', 'build/client/');
         fse.ensureDirSync(path.dirname(dst));
         grunt.file.write(dst, cnt);
       });
       
       goog.array.forEach(prodPlovrConfigs, function(pth) {
-        var dst = pth.replace('client/src/', 'client/public/');
+        var dst = pth.replace('src/client/', 'build/client/');
         fse.ensureDirSync(path.dirname(dst));
       });
       
@@ -180,16 +191,16 @@ module.exports = function(grunt) {
 
   
   grunt.registerTask(
-    'updatePathsInPublicCss',
-    'Updating paths in public CSSs built by Plovr',
+    'updatePathsInBuildCss',
+    'Updating paths in CSSs built by Plovr',
     function() {
       goog.array.forEach(prodPlovrCsss, function(plovrBuildCss) {
-        var pathPrefix = path.relative('client/public/', path.dirname(plovrBuildCss));
+        var pathPrefix = path.relative('build/client/', path.dirname(plovrBuildCss));
 
         var cnt = grunt.file.read(plovrBuildCss);
         cnt = cnt.replace(/url\(\s?(['"]?)(?:\.\.\/)+(img\/[^'")]+)\1\s?\)/gmi,
             function(match, wrapper, imgPath) {
-              var imgPath = path.relative(pathPrefix, imgPath);
+              imgPath = path.relative(pathPrefix, imgPath);
               imgPath = imgPath.replace(/\\/g,"/");
               var result = "url('"+imgPath+"')";
               return result;
@@ -218,11 +229,11 @@ module.exports = function(grunt) {
   //end grunt-contrib-copy
   
   
-  grunt.registerTask('updatePublic', ['clean:build', 'copy:fromBower', 'copy:fromSrc', 'createPublicHtml:my']);
+  grunt.registerTask('updateBuild', ['clean:build', 'copy:fromBower', 'copy:fromSrc', 'createBuildHtml:my']);
 var buildTasks = [
-    'updatePublic',
+    'updateBuild',
     'shell:buildUsingPlovr',
-    'updatePathsInPublicCss',
+    'updatePathsInBuildCss',
     'open:build'
   ];
   var useMap = grunt.option('map');

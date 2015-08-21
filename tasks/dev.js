@@ -25,7 +25,7 @@ module.exports = function(grunt) {
     },
     open: {
       dev: {
-        path: 'http://localhost:9000/client/src/'
+        path: 'http://localhost:9000/src/client/'
       }
     },
     bgShell: {

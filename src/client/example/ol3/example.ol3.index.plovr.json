@@ -1,6 +1,6 @@
 {
 
-  "id": "index",
+  "id": "example-ol3-index",
 
   "ambiguate-properties": false,
 
@@ -33,16 +33,17 @@
     "visibility": "ERROR"
   },
   
-  "closure-library": "../../bower_components/closure-library/closure/goog",
+  "closure-library": "../../../../bower_components/closure-library/closure/goog",
   
   "css-allowed-unrecognized-properties": [
     "user-select"
   ],
 
   "css-inputs": [
+    "example.ol3.index.css"
   ],
 
-  "css-output-file": "../public/index.css",
+  "css-output-file": "../../../../build/client/example/ol3/index.css",
   
 
   "define": {
@@ -65,18 +66,18 @@
 
 
   "externs": [
-    "../../bower_components/ol3/externs/olx.js",
-    "../../bower_components/ol3/externs/bingmaps.js",
-    "../../bower_components/ol3/externs/closure-compiler.js",
-    "../../bower_components/ol3/externs/geojson.js",
-    "../../bower_components/ol3/externs/topojson.js",
-    "../../bower_components/ol3/externs/oli.js",
-    "../../bower_components/ol3/externs/proj4js.js",
-    "../../bower_components/ol3/externs/tilejson.js"
+    "../../../../bower_components/ol3/externs/olx.js",
+    "../../../../bower_components/ol3/externs/bingmaps.js",
+    "../../../../bower_components/ol3/externs/closure-compiler.js",
+    "../../../../bower_components/ol3/externs/geojson.js",
+    "../../../../bower_components/ol3/externs/topojson.js",
+    "../../../../bower_components/ol3/externs/oli.js",
+    "../../../../bower_components/ol3/externs/proj4js.js",
+    "../../../../bower_components/ol3/externs/tilejson.js"
   ],
 
   "inputs": [
-    "js/webpages/index.js"
+    "example.ol3.index.js"
   ],
 
   "level": "VERBOSE",
@@ -89,9 +90,9 @@
   ],
 
   "paths": [
-    "../../bower_components/ol3/build/ol.ext",
-    "../../bower_components/ol3/src",
-    "js"
+    "../../../../bower_components/ol3/build/ol.ext",
+    "../../../../bower_components/ol3/src",
+    "../../../client/"
   ],
   
   "treat-warnings-as-errors": true,

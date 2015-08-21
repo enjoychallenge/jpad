@@ -11,12 +11,12 @@ var fs = require("fs");
 var plovrVars = require('./../tasks/util/get-plovr-vars.js');
 var plovrIds = plovrVars.plovrIds;
 
-app.use('/client/src/', function(req, res, next) {
+app.use('/src/client/', function(req, res, next) {
   var filePath = req.path;
   if(goog.string.endsWith(filePath, '/')) {
     filePath = filePath + 'index.html';
   }
-  filePath = 'client/src' + filePath;
+  filePath = 'src/client' + filePath;
   if(goog.string.endsWith(filePath, '.html') && fs.existsSync(filePath)) {
     var cnt = fs.readFileSync(filePath);
     cnt += "";

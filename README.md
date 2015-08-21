@@ -35,11 +35,11 @@ Windows users: If you have some errors during `npm install` related to [node-gyp
 
 ## Development
 * `grunt` to run dev server and open Hello World in the browser
-  * Edit content of `client/src/js/webpages/index.js` and see changes in the browser
+  * Edit content of `src/client/example/ol3/example.ol3.index.js` and see changes in the browser
 * `grunt lint` to run gjslint
 * `grunt fix` to run fixjsstyle
 
 ## Build
-* `grunt build` to compile the code and copy files to `client/public`
+* `grunt build` to compile the code and copy files to `build/`
 * `grunt build --map` to include also [source maps](https://developer.chrome.com/devtools/docs/javascript-debugging#source-maps)
 

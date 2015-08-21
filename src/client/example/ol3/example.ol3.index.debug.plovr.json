@@ -1,9 +1,9 @@
 {
-  "id": "index-debug",
+  "id": "example-ol3-index-debug",
 
   "debug": true,
 
-  "inherits": "index.plovr.json",
+  "inherits": "example.ol3.index.plovr.json",
   "define": {
     "goog.DEBUG": true,
     "goog.LOCALE": "cs",

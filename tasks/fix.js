@@ -14,7 +14,7 @@ module.exports = function(grunt) {
           '--custom_jsdoc_tags=event,fires,api,observable',
           '--strict',
           '-r',
-          'client/src/js'
+          'src/client'
         ].join(' ')
       }
     }

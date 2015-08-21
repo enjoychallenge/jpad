@@ -15,7 +15,7 @@ module.exports = function(grunt) {
           '--strict',
           '--beep',
           '-r',
-          'client/src/js'
+          'src/client'
         ].join(' ')
       }
     }

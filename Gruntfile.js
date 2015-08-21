@@ -4,33 +4,33 @@ module.exports = function(grunt) {
   
   grunt.initConfig({
     
-    // bower_components files that should be copied to public folder
+    // bower_components files that should be copied to build folder
     publBowerFiles: [
       {
         src: 'bower_components/proj4js/lib/proj4js-combined.js',
-        dest: 'client/public/lib/proj4js/proj4js-combined.js'
+        dest: 'build/client/lib/proj4js/proj4js-combined.js'
       },
       {
         cwd: 'bower_components/ol3/css',
         src: '**/*',
-        dest: 'client/public/lib/ol3/css/',
+        dest: 'build/client/lib/ol3/css/',
         expand: true
       },
       {
-        cwd: 'bower_components/ol3/resources',
+        cwd: 'bower_components/ol3/examples/resources',
         src: '**/*',
-        dest: 'client/public/lib/ol3/resources/',
+        dest: 'build/client/lib/ol3/examples/resources/',
         expand: true
       }
     ],
     
     
-    // source files that should be copied to public folder
+    // source files that should be copied to build folder
     publSrcFiles: [
       {
-        cwd: 'client/src/css/',
-        src: ['**/*', '!plovr.css'],
-        dest: 'client/public/css/',
+        cwd: 'src/client/',
+        src: ['**/*.css', '!plovr.css'],
+        dest: 'build/client/',
         expand: true
       }
     ]
