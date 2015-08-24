@@ -41,6 +41,10 @@ module.exports = function(grunt) {
 
   require('load-grunt-tasks')(grunt);
 
-
-  grunt.registerTask('dev', ['bgShell:serveUsingPlovr', 'express:dev', 'open:dev', 'watch']);
+  grunt.registerTask('dev', [
+    'bgShell:serveUsingPlovr',
+    'express:dev',
+    'open:dev',
+    'watch'
+  ]);
 };
