@@ -29,7 +29,7 @@ module.exports = function(grunt) {
     publSrcFiles: [
       {
         cwd: 'src/client/',
-        src: ['**/*.css', '!plovr.css'],
+        src: ['**/*.png'],
         dest: 'build/client/',
         expand: true
       }

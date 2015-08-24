@@ -23,6 +23,10 @@
     "grunt-open": "^0.2.3",
     "grunt-shell": "^0.7.0",
     "gulp": "^3.9.0",
+    "gulp-debug": "^2.1.0",
+    "gulp-gjslint": "^0.1.5",
+    "gulp-load-plugins": "^1.0.0-rc.1",
+    "gulp-minify-css": "^1.2.1",
     "gulp-shell": "^0.4.2",
     "gulp-watch": "^4.3.5",
     "load-grunt-tasks": "^0.4.0",
@@ -33,6 +37,5 @@
     "google closure",
     "devstack"
   ],
-  "dependencies": {
-  }
+  "dependencies": {}
 }

@@ -35,17 +35,6 @@
   
   "closure-library": "../../../../bower_components/closure-library/closure/goog",
   
-  "css-allowed-unrecognized-properties": [
-    "user-select"
-  ],
-
-  "css-inputs": [
-    "example.ol3.index.css"
-  ],
-
-  "css-output-file": "../../../../build/client/example/ol3/index.css",
-  
-
   "define": {
     "goog.DEBUG": false,
     "goog.LOCALE": "cs",

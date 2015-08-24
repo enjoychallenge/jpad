@@ -20,10 +20,6 @@ module.exports = function(grunt) {
   if(!plovrIds) {
     throw new Error('`provrIds` required');
   }
-  var prodPlovrCsss = grunt.config('prodPlovrCsss');
-  if(!prodPlovrCsss) {
-    throw new Error('`prodPlovrCsss` required');
-  }
   var publBowerFiles = grunt.config('publBowerFiles');
   if(!publBowerFiles) {
     throw new Error('`publBowerFiles` required');
@@ -32,7 +28,7 @@ module.exports = function(grunt) {
   if(!publSrcFiles) {
     throw new Error('`publSrcFiles` required');
   }
-
+  
   grunt.config.merge({
     clean: {
       build: ["build/client"]
@@ -58,6 +54,9 @@ module.exports = function(grunt) {
           result += pth + ' > ' + dst;
           return result;
         }).join('&')
+      },
+      buildCss: {
+        command: 'gulp build:css'
       }
     },
     createBuildHtml: {
@@ -137,31 +136,14 @@ module.exports = function(grunt) {
         var urlToReplace;
         cnt = cnt.replace(/^(.*<(link|script).* (?:src|href)=['"])([^'"]+)(['"].*\/(\2)?>.*$)/gmi,
             function(match, prefix, tag, url, postfix) {
-              // plovr-compiled CSS
-              if(url.indexOf('http://localhost:9810/css/')==0) {
-                var plovrId = url.substring(26, url.length-1);
-                if(goog.string.caseInsensitiveEndsWith(plovrId, '-debug')) {
-                  plovrId = plovrId.substring(0, plovrId.length-6);
-                }
-                var plovrConfigPath = plovrIds[plovrId];
-                var plovrConfig = grunt.file.readJSON(plovrConfigPath);
-                var dstCss = plovrConfig['css-output-file'];
-                plovrConfigPath = path.resolve('.', plovrConfigPath);
-                var plovrConfigDir = path.dirname(plovrConfigPath);
-                var absCssPath = path.resolve(plovrConfigDir, dstCss);
-                dstCss = path.relative(path.dirname(absBuildHtmlPath),
-                    absCssPath);
-                dstCss = dstCss.replace(/\\/g,"/");
-                var result = prefix + dstCss + postfix;
-              // plovr-compiled JS
-              } else if (url.indexOf('http://localhost:9810/compile?')==0) {
-                plovrId = (new goog.Uri(url)).getParameterValue('id');
+              if (url.indexOf('http://localhost:9810/compile?')==0) {
+                var plovrId = (new goog.Uri(url)).getParameterValue('id');
                 if(goog.string.caseInsensitiveEndsWith(plovrId, '-debug')) {
                   plovrId = plovrId.substring(0, plovrId.length-6);
                 }
                 var dstJs = plovrIds[plovrId];
                 dstJs = path.basename(dstJs, '.plovr.json')+'.js';
-                result = prefix + dstJs + postfix;
+                var result = prefix + dstJs + postfix;
               // plovr.css
               } else if(goog.string.endsWith(url, 'plovr.css')) {
                 result = '';
@@ -190,27 +172,6 @@ module.exports = function(grunt) {
   );
 
   
-  grunt.registerTask(
-    'updatePathsInBuildCss',
-    'Updating paths in CSSs built by Plovr',
-    function() {
-      goog.array.forEach(prodPlovrCsss, function(plovrBuildCss) {
-        var pathPrefix = path.relative('build/client/', path.dirname(plovrBuildCss));
-
-        var cnt = grunt.file.read(plovrBuildCss);
-        cnt = cnt.replace(/url\(\s?(['"]?)(?:\.\.\/)+(img\/[^'")]+)\1\s?\)/gmi,
-            function(match, wrapper, imgPath) {
-              imgPath = path.relative(pathPrefix, imgPath);
-              imgPath = imgPath.replace(/\\/g,"/");
-              var result = "url('"+imgPath+"')";
-              return result;
-            });
-        grunt.file.write(plovrBuildCss, cnt);
-      });
-      
-    }
-  );
-
   //taken from grunt-contrib-copy
   var detectDestType = function(dest) {
     if (grunt.util._.endsWith(dest, '/')) {
@@ -233,7 +194,7 @@ module.exports = function(grunt) {
 var buildTasks = [
     'updateBuild',
     'shell:buildUsingPlovr',
-    'updatePathsInBuildCss',
+    'shell:buildCss',
     'open:build'
   ];
   var useMap = grunt.option('map');

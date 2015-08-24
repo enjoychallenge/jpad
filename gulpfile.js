@@ -1,29 +1,12 @@
 var gulp = require('gulp');
-var watch = require('gulp-watch');
-var shell = require('gulp-shell');
-var path = require('path');
+var plugins = require('gulp-load-plugins')();
 
-// in a task
- 
-gulp.task('default', function () {
+function loadTask(task) {
+    require('./tasks-gulp/' + task)(gulp, plugins);
+}
+loadTask('build');
+loadTask('dev-lint');
+loadTask('fix');
+loadTask('lint');
 
-  var options = {
-    templateData: {
-      f: function (filePath) {
-        filePath = path.relative('.', filePath);
-        filePath = filePath.replace(/\\/g,"/");
-        return filePath;
-      }
-    }
-  };
-  
-  watch('./src/client/**/*.js')
-    .pipe(shell(['fixjsstyle ' +
-          '--jslint_error=all ' +
-          '--custom_jsdoc_tags=event,fires,api,observable ' +
-          '--strict ' +
-          '<%= f(file.path) %>'], options));
-  
-});
-
- 
+gulp.task('default', ['dev-lint']);

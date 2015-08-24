@@ -30,8 +30,12 @@ app.use('/src/client/', function(req, res, next) {
             }
             var plovrConfig = grunt.file.readJSON(plovrIds[plovrId]);
             var srcCssFiles = plovrConfig['css-inputs'];
-            var result = srcCssFiles.join(postPath + "\n" + prePath);
-            result = prePath + result + postPath;
+            if(srcCssFiles) {
+              var result = srcCssFiles.join(postPath + "\n" + prePath);
+              result = prePath + result + postPath;
+            } else {
+              result = match;
+            }
           } else {
             result = match;
           }
