@@ -3,7 +3,6 @@
 module.exports = function (gulp, plugins) {
   
   gulp.task('lint:gjslint', function (cb) {
-
     gulp.src('src/client/**/*.js')
         .pipe(plugins.gjslint({
             flags: [
@@ -17,7 +16,15 @@ module.exports = function (gulp, plugins) {
     cb();
   });
 
+  gulp.task('lint:mocha', function (cb) {
+    return gulp.src('tasks-gulp/mocha/lint.js', {read: false})
+        // gulp-mocha needs filepaths so you can't have any plugins before it 
+        .pipe(plugins.mocha({reporter: 'dot'}));
+    cb();
+    
+  });
 
-  gulp.task('lint', ['lint:gjslint']);
+
+  gulp.task('lint', ['lint:mocha']);
 };
 
