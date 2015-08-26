@@ -1,11 +1,11 @@
 var glob = require("glob");
 var path = require("path");
 var TreeModel = require("tree-model");
+var assert = require("chai").assert;
 
 require('./../../bower_components/closure-library/closure/goog/bootstrap/nodejs');
 goog.require('goog.array');
 
-var assert = require("assert");
 describe('src/client/', function() {
   var dirTree = new TreeModel();
   var dirRoot = dirTree.parse({name: 'client', path: ''});
@@ -46,17 +46,17 @@ describe('src/client/', function() {
     return parent;
   };
 
-  goog.array.forEach(fpaths, function(fpath) {
-    fpath = path.relative('src/client', fpath).replace(/\\/g, '/');
+  goog.array.forEach(fpaths, function(completeFpath) {
+    var fpath = path.relative('src/client', completeFpath).replace(/\\/g, '/');
     describe(fpath, function () {
       var fname = path.basename(fpath, path.extname(fpath))
       var correctDirNode = findCorrectParent(fname);
       var correctDir = correctDirNode.model.path;
+      var completeCorrectDir = 'src/client/'+correctDir;
       var fdir = path.dirname(fpath);
       fdir = fdir==='.' ? '' : fdir;
 
-      fpath = 'src/client/'+fpath;
-      fdir = 'src/client/'+fdir;
+      var completeFdir = 'src/client/'+fdir;
 
       var cdirParts = correctDir ? correctDir.split('/') : [];
       var fparts = fname.split('.');
@@ -65,14 +65,21 @@ describe('src/client/', function() {
         var d = 'src/client/'+fparts.slice(0, i).join('/');
         correctDirs.push(d);
       }
-      correctDirs = correctDirs.join(' ');
-      correctDir = 'src/client/'+correctDir;
+      correctDirs = correctDirs.join(path.delimiter);
 
       it('should be either located in one of following folders (' +
           correctDirs+') ' +
           'or renamed', function () {
-        assert.equal(fdir, correctDir);
+        assert.equal(completeFdir, completeCorrectDir);
       });
+      
+      var fextname = path.basename(fpath);
+      var fextnamere = /^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$/;
+      it('should be named according to pattern ' + fextnamere, function () {
+        assert.match(fextname, fextnamere);
+      });
+      
+      
     });
   });
 });
