@@ -2,6 +2,7 @@ var glob = require("glob");
 var path = require("path");
 var TreeModel = require("tree-model");
 var assert = require("chai").assert;
+var fs = require("fs-extra");
 
 require('./../../bower_components/closure-library/closure/goog/bootstrap/nodejs');
 goog.require('goog.array');
@@ -79,11 +80,6 @@ describe('src/client/', function() {
         var fextnamere = /^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$/;
         assert.match(fextname, fextnamere);
       });
-      
-      if(extname === '.js') {
-        //check goog.provide
-      }
-      
       
     });
   });

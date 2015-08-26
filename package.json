@@ -9,6 +9,7 @@
     "node": ">= 0.6.0"
   },
   "devDependencies": {
+    "acorn": "^2.3.0",
     "async": "0.9.0",
     "browserify": "9.0.3",
     "chai": "^3.2.0",

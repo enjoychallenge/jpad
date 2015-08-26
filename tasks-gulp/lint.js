@@ -17,7 +17,11 @@ module.exports = function (gulp, plugins) {
   });
 
   gulp.task('lint:mocha', function (cb) {
-    return gulp.src('tasks-gulp/mocha/lint.js', {read: false})
+    var src = [
+      'tasks-gulp/mocha/lint.file.name.js',
+      'tasks-gulp/mocha/lint.goog.provide.js'
+    ];
+    return gulp.src(src, {read: false})
         // gulp-mocha needs filepaths so you can't have any plugins before it 
         .pipe(plugins.mocha({reporter: 'dot'}));
     cb();

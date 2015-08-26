@@ -1,4 +1,4 @@
-goog.provide('app.wp.index');
+goog.provide('example.ol3.index');
 
 goog.require('ol.Map');
 goog.require('ol.View');
@@ -9,7 +9,7 @@ goog.require('ol.source.OSM');
 /**
  * The main function.
  */
-app.wp.index = function() {
+example.ol3.index = function() {
 
   var raster = new ol.layer.Tile({
     source: new ol.source.OSM({
@@ -32,4 +32,4 @@ app.wp.index = function() {
 
 
 };
-goog.exportSymbol('main', app.wp.index);
+goog.exportSymbol('main', example.ol3.index);
