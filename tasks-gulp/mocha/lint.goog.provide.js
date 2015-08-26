@@ -58,9 +58,10 @@ describe('namespace', function() {
           tok3.type.label === '(' &&
           tok4.type.label === 'string' &&
           tok5.type.label === ')') {
-        namespaces.push(tok4.value);
+        namespaces.push(tok4.value.toLowerCase());
       }
     });
+    goog.array.removeDuplicates(namespaces);
     
     
 
