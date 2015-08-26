@@ -66,7 +66,8 @@ describe('src/client/', function() {
             var cdirParts = correctDir ? correctDir.split('/') : [];
             var fparts = fname.split('.');
             var correctDirs = [];
-            for (var i = cdirParts.length, max = fparts.length+1; i < max; i++) {
+            var max = fparts.length+1;
+            for (var i = cdirParts.length; i < max; i++) {
               var d = 'src/client/'+fparts.slice(0, i).join('/');
               correctDirs.push(d);
             }
