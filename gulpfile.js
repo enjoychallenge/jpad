@@ -9,4 +9,5 @@ loadTask('dev-lint');
 loadTask('fix');
 loadTask('lint');
 
+gulp.task('fixlint', ['fix', 'lint']);
 gulp.task('default', ['dev-lint']);

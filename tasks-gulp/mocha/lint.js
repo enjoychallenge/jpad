@@ -9,8 +9,6 @@ goog.require('goog.array');
 describe('src/client/', function() {
   var dirTree = new TreeModel();
   var dirRoot = dirTree.parse({name: 'client', path: ''});
-  
-  
   var dirpaths = glob.sync('src/client/**/');
   dirpaths.shift();
   goog.array.forEach(dirpaths, function(dirpath) {
@@ -29,55 +27,62 @@ describe('src/client/', function() {
   
   var fpaths = glob.sync('src/client/**/*', {nodir: true});
 
-  var findCorrectParent = function(fname) {
-    var parts = fname.split('.');
-    var parentPath = parts.join('/');
-    var parent = dirRoot.first(function(n) {
-      return n.model.path === parentPath;
-    });
-    parts.pop();
-    while(!parent) {
-      parentPath = parts.join('/');
-      parent = dirRoot.first(function(n) {
-        return n.model.path === parentPath;
-      });
-      parts.pop();
-    }
-    return parent;
-  };
-
   goog.array.forEach(fpaths, function(completeFpath) {
     var fpath = path.relative('src/client', completeFpath).replace(/\\/g, '/');
     describe(fpath, function () {
-      var fname = path.basename(fpath, path.extname(fpath))
-      var correctDirNode = findCorrectParent(fname);
-      var correctDir = correctDirNode.model.path;
-      var completeCorrectDir = 'src/client/'+correctDir;
-      var fdir = path.dirname(fpath);
-      fdir = fdir==='.' ? '' : fdir;
+      var fextname = path.basename(fpath);
+      var extname = path.extname(fextname);
+      var fname = path.basename(fpath, extname);
 
-      var completeFdir = 'src/client/'+fdir;
+      it('should be located according to its name ' +
+          '(or named according to its location)',
+        function () {
+          var findCorrectParent = function(fname) {
+            var parts = fname.split('.');
+            var parentPath = parts.join('/');
+            var parent = dirRoot.first(function(n) {
+              return n.model.path === parentPath;
+            });
+            parts.pop();
+            while(!parent) {
+              parentPath = parts.join('/');
+              parent = dirRoot.first(function(n) {
+                return n.model.path === parentPath;
+              });
+              parts.pop();
+            }
+            return parent;
+          };
 
-      var cdirParts = correctDir ? correctDir.split('/') : [];
-      var fparts = fname.split('.');
-      var correctDirs = [];
-      for (var i = cdirParts.length, max = fparts.length+1; i < max; i++) {
-        var d = 'src/client/'+fparts.slice(0, i).join('/');
-        correctDirs.push(d);
-      }
-      correctDirs = correctDirs.join(path.delimiter);
-
-      it('should be either located in one of following folders (' +
-          correctDirs+') ' +
-          'or renamed', function () {
-        assert.equal(completeFdir, completeCorrectDir);
+          var correctDirNode = findCorrectParent(fname);
+          var correctDir = correctDirNode.model.path;
+          var completeCorrectDir = 'src/client/'+correctDir;
+          var fdir = path.dirname(fpath);
+          fdir = fdir==='.' ? '' : fdir;
+          var completeFdir = 'src/client/'+fdir;
+          var cdirParts = correctDir ? correctDir.split('/') : [];
+          var fparts = fname.split('.');
+          var correctDirs = [];
+          for (var i = cdirParts.length, max = fparts.length+1; i < max; i++) {
+            var d = 'src/client/'+fparts.slice(0, i).join('/');
+            correctDirs.push(d);
+          }
+          correctDirs = correctDirs.join(path.delimiter);
+          
+          assert.equal(completeFdir, completeCorrectDir,
+              'should be either located in one of following folders (' +
+              correctDirs+') ' + 'or renamed'
+          );
       });
       
-      var fextname = path.basename(fpath);
-      var fextnamere = /^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$/;
-      it('should be named according to pattern ' + fextnamere, function () {
+      it('should be named according to pattern', function () {
+        var fextnamere = /^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$/;
         assert.match(fextname, fextnamere);
       });
+      
+      if(extname === '.js') {
+        //check goog.provide
+      }
       
       
     });

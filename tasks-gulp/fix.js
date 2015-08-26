@@ -8,7 +8,7 @@ module.exports = function (gulp, plugins) {
  
     var cmd = ['fixjsstyle', 
           '--jslint_error=all',
-          '--custom_jsdoc_tags=event,fires,api,observable',
+          //'--custom_jsdoc_tags=event,fires,api,observable',
           '--strict',
           '-r',
           'src/client'

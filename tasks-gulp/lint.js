@@ -25,6 +25,6 @@ module.exports = function (gulp, plugins) {
   });
 
 
-  gulp.task('lint', ['lint:mocha']);
+  gulp.task('lint', ['lint:gjslint', 'lint:mocha']);
 };
 
