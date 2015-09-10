@@ -25,14 +25,14 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
   gulp.task('dev:serve', function (cb) {
     //run dev server 
     var server = plugins.liveServer(
-        './server/server.js',
+        './server/server-gulp.js',
         undefined,
         false
     );
     server.start();
  
     //restart dev server 
-    gulp.watch('./server/server.js', server.start.bind(server));
+    gulp.watch('./server/server-gulp.js', server.start.bind(server));
     
     cb();
   });
