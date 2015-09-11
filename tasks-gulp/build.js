@@ -6,6 +6,7 @@ var exec = require('child_process').exec;
 
 require('./../bower_components/closure-library/closure/goog/bootstrap/nodejs');
 goog.require('goog.array');
+goog.require('goog.string');
 
 module.exports = function (gulp, plugins, ol3dsCfg) {
   
@@ -14,7 +15,35 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
     cb();
   });
 
-  gulp.task('build:plovr', function (cb) {
+  gulp.task('build:copy', ['build:clean'], function (cb) {
+    goog.array.forEach(ol3dsCfg.libMappings, function(lm) {
+      var src = lm.src;
+      var dest = lm.dest;
+      dest = path.join('build/client', dest);
+      var srcs = glob.sync(src);
+      goog.array.forEach(srcs, function(src) {
+        fs.copySync(src, dest);
+      });
+    });
+    goog.array.forEach(ol3dsCfg.srcClientMappings, function(fm) {
+      if(goog.isString(fm)) {
+        var src = fm;
+        var cwd = path.join(process.cwd(), 'src/client');
+        var srcs = glob.sync(src, {
+          cwd: cwd
+        });
+        goog.array.forEach(srcs, function(src) {
+          fs.copySync(path.join('src/client', src),
+              path.join('build/client', src));
+        });
+      } else {
+        throw Error('Not yet supported');
+      }
+    });
+    cb();
+  });
+
+  gulp.task('build:plovr', ['build:copy'], function (cb) {
     var useMap = ol3dsCfg.generateSourceMaps;
     var ncmds = ol3dsCfg.mainPlovrCfgs.length;
     if(!ncmds) {
@@ -23,7 +52,6 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
     goog.array.forEach(ol3dsCfg.mainPlovrCfgs, function(pth) {
       var dst = pth.replace('src/client/', 'build/client/');
       dst = dst.replace('.plovr.json', '.js');
-      fs.mkdirsSync(path.dirname(dst));
       fs.mkdirsSync(path.dirname(dst));
       var cmd = 'java -jar bower_components/plovr/index.jar build ';
       if(useMap) {
@@ -51,7 +79,7 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
     });
   });
 
-  gulp.task('build:css:min', function () {
+  gulp.task('build:css:min', ['build:copy'], function () {
 
     var stream = gulp.src('src/client/**/*.css')
         .pipe(plugins.minifyCss())
@@ -105,6 +133,7 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
 
   gulp.task('build', [
     'build:clean',
+    'build:copy',
     'build:plovr',
     'build:css:min',
     'build:css:absolutize-paths'

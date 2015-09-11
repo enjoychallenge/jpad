@@ -9,7 +9,7 @@ var ol3ds = {
     ignore: 'src/client/**/*.debug.plovr.json'
   }),
   port: 9000,
-  fileMappings: [
+  libMappings: [
     {
       src: 'bower_components/ol3/css/',
       dest: '_lib/ol3/css/'
@@ -17,11 +17,10 @@ var ol3ds = {
     {
       src: 'bower_components/ol3/examples/resources/',
       dest: '_lib/ol3/examples/resources/'
-    },
-    {
-      src: 'src/client/**/*.png',
-      dest: ''
     }
+  ],
+  srcClientMappings: [
+    '**/*.png'
   ],
   generateSourceMaps: false
 };

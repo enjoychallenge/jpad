@@ -11,11 +11,9 @@ var ol3dsCfg = require('./../config.js');
 var appPath = ol3dsCfg.appPath;
 var port = ol3dsCfg.port;
 
-goog.array.forEach(ol3dsCfg.fileMappings, function(fm) {
-  if(!goog.string.startsWith(fm.src, 'src/client/')) {
-    var physdir = (__dirname+'/../'+fm.src).replace(/\//g, path.sep);
-    app.use(appPath+fm.dest, express.static(physdir));  
-  }
+goog.array.forEach(ol3dsCfg.libMappings, function(lm) {
+  var physdir = (__dirname+'/../'+lm.src).replace(/\//g, path.sep);
+  app.use(appPath+lm.dest, express.static(physdir));  
 });
 
 
