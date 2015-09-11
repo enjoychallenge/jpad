@@ -2,12 +2,50 @@
 var glob = require("glob");
 var path = require("path");
 var fs = require("fs-extra");
+var exec = require('child_process').exec;
 
 require('./../bower_components/closure-library/closure/goog/bootstrap/nodejs');
 goog.require('goog.array');
 
 module.exports = function (gulp, plugins, ol3dsCfg) {
   
+  gulp.task('build:clean', function (cb) {
+    fs.removeSync('build');
+    cb();
+  });
+
+  gulp.task('build:plovr', function (cb) {
+    var useMap = ol3dsCfg.generateSourceMaps;
+    var ncmds = ol3dsCfg.mainPlovrCfgs.length;
+    if(!ncmds) {
+      cb();
+    }
+    goog.array.forEach(ol3dsCfg.mainPlovrCfgs, function(pth) {
+      var dst = pth.replace('src/client/', 'build/client/');
+      dst = dst.replace('.plovr.json', '.js');
+      fs.mkdirsSync(path.dirname(dst));
+      fs.mkdirsSync(path.dirname(dst));
+      var cmd = 'java -jar bower_components/plovr/index.jar build ';
+      if(useMap) {
+        cmd += '--create_source_map ' + dst + '.map ';
+      }
+      cmd += pth + ' > ' + dst;
+      exec(cmd, function(error, stdout, stderr) {
+        if(stdout) {
+          console.log('stdout', pth, error.toString());
+        }
+        if(error) {
+          cb(error);
+        } else {
+          ncmds--;
+          if(!ncmds) {
+            cb();
+          }
+        }
+      });
+    });
+  });
+
   gulp.task('build:css:min', function () {
 
     var stream = gulp.src('src/client/**/*.css')
@@ -60,6 +98,11 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
   });
 
 
-  gulp.task('build', ['build:css:min', 'build:css:absolutize-paths']);
+  gulp.task('build', [
+    'build:clean',
+    'build:plovr',
+    'build:css:min',
+    'build:css:absolutize-paths'
+  ]);
 };
 

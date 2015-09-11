@@ -1,9 +1,13 @@
 'use strict';
 var glob = require('glob');
 
+var plovrPattern = 'src/client/**/*.plovr.json';
 var ol3ds = {
   appPath: '/path/to/application/',
-  plovrCfgs: glob.sync('src/client/**/*.plovr.json'),
+  plovrCfgs: glob.sync(plovrPattern),
+  mainPlovrCfgs: glob.sync(plovrPattern, {
+    ignore: 'src/client/**/*.debug.plovr.json'
+  }),
   port: 9000,
   fileMappings: [
     {
@@ -18,7 +22,8 @@ var ol3ds = {
       src: 'src/client/**/*.png',
       dest: ''
     }
-  ]
+  ],
+  generateSourceMaps: false
 };
 
 module.exports = ol3ds;
