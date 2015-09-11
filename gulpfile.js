@@ -10,8 +10,10 @@ var argv = require('yargs')
     .command('dev', 'Run dev server and open app.')
     .command('build', 'Compile and refactor files for publishing.')
     .option('s', {
+        type: 'boolean',
         alias: 'sourcemap',
-        describe: 'Generate source maps for JS files.'
+        describe: 'Generate source maps for JS files.' +
+            ' Related to \'build\' task only.'
     })
     .help('h')
     .alias('h', 'help')

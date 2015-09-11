@@ -37,6 +37,11 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
         if(error) {
           cb(error);
         } else {
+          if(useMap) {
+            var content = fs.readFileSync(dst, {encoding: 'utf-8'});
+            content += '//# sourceMappingURL='+path.basename(dst)+'.map';
+            fs.writeFileSync(dst, content, {encoding: 'utf-8'});
+          }
           ncmds--;
           if(!ncmds) {
             cb();
