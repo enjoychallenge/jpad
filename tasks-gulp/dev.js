@@ -8,6 +8,7 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
   gulp.task('dev:serve:plovr', function (cb) {
     //start plovr server
     var args = ['-jar', 'bower_components/plovr/index.jar', 'serve'];
+    console.log(ol3dsCfg.plovrCfgs);
     goog.array.extend(args, ol3dsCfg.plovrCfgs);
     var plovr = spawn('java', args);
     var logData = function (data) {

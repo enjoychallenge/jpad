@@ -20,6 +20,7 @@ module.exports = function (gulp, plugins) {
     var src = [
       'tasks-gulp/mocha/lint.file.name.js',
       'tasks-gulp/mocha/lint.goog.provide.js',
+      'tasks-gulp/mocha/lint.html.js',
       'tasks-gulp/mocha/lint.plovr.cfg.js'
     ];
     return gulp.src(src, {read: false})

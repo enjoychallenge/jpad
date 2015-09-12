@@ -6,7 +6,10 @@ var ol3ds = {
   appPath: '/path/to/application/',
   plovrCfgs: glob.sync(plovrPattern),
   mainPlovrCfgs: glob.sync(plovrPattern, {
-    ignore: 'src/client/**/*.debug.plovr.json'
+    ignore: [
+      'src/client/**/*.dev.plovr.json',
+      'src/client/**/*.modon.plovr.json'
+    ]
   }),
   port: 9000,
   libMappings: [
