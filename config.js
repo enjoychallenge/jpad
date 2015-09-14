@@ -4,6 +4,7 @@ var glob = require('glob');
 var plovrPattern = 'src/client/**/*.plovr.json';
 var ol3ds = {
   appPath: '/path/to/application/',
+  plovrHtmls: glob.sync('src/client/**/*.html'),
   plovrCfgs: glob.sync(plovrPattern),
   mainPlovrCfgs: glob.sync(plovrPattern, {
     ignore: [

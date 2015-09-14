@@ -3,6 +3,8 @@ var glob = require("glob");
 var path = require("path");
 var fs = require("fs-extra");
 var exec = require('child_process').exec;
+var cheerio = require("cheerio");
+var ol3ds =  require('../tasks-gulp/util/ol3ds.js');
 
 require('./../bower_components/closure-library/closure/goog/bootstrap/nodejs');
 goog.require('goog.array');
@@ -40,6 +42,38 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
         throw Error('Not yet supported');
       }
     });
+    cb();
+  });
+
+  gulp.task('build:html', ['build:copy'], function (cb) {
+    goog.array.forEach(ol3dsCfg.plovrHtmls, function(htmlPath) {
+      var localHtmlPath = path.resolve('.', htmlPath);
+      var fcontent = fs.readFileSync(localHtmlPath);
+      var $ = cheerio.load(fcontent);
+      //replace links to *.plovr.json with compiled .js
+      $('script[src$=\'.plovr.json\']').each(function(i, elem) {
+          var src = $(this).attr('src');
+          var srcBasename = path.basename(src, '.plovr.json');
+          src = srcBasename+'.js';
+          $(this).attr('src', src);
+      });
+      var htmlout = $.html();
+      var outPath = path.resolve('./build/client',
+          path.relative('src/client', htmlPath));
+      fs.writeFileSync(outPath, htmlout, {encoding: 'utf-8'});
+    });
+    
+    var htmls = glob.sync('build/client/**/*.html');
+    goog.array.forEach(htmls, function(htmlPath) {
+      var localHtmlPath = path.resolve('.', htmlPath);
+      var fcontent = fs.readFileSync(localHtmlPath);
+      var $ = cheerio.load(fcontent);
+      var htmlPath = path.relative('build/client', htmlPath);
+      ol3ds.absolutizePathsInHtml($, htmlPath);
+      var htmlout = $.html();
+      fs.writeFileSync(localHtmlPath, htmlout, {encoding: 'utf-8'});
+    });
+    
     cb();
   });
 
@@ -134,6 +168,7 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
   gulp.task('build', [
     'build:clean',
     'build:copy',
+    'build:html',
     'build:plovr',
     'build:css:min',
     'build:css:absolutize-paths'
