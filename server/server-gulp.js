@@ -21,8 +21,16 @@ goog.array.forEach(ol3dsCfg.libMappings, function(lm) {
 //deal with HTML files
 app.use(appPath, function(req, res, next) {
   var reqPath = req.path.replace(/^\/|\/$/g, '');
+  if(req.originalUrl+'/' === appPath) {
+    res.redirect(appPath);
+    return;
+  }
   var localReqPath = __dirname+'/../src/client/'+reqPath;
   if(fs.lstatSync(localReqPath).isDirectory()) {
+    if(!goog.string.endsWith(req.path, '/')) {
+      res.redirect(appPath+reqPath+'/');
+      return;
+    }
     if(reqPath === '') {
       var htmlName = 'index.html';
     } else {
