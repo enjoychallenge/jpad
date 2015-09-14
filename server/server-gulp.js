@@ -34,12 +34,13 @@ app.use(appPath, function(req, res, next) {
     }
     if(reqPath === '') {
       var htmlName = 'index.html';
+      var htmlPath = htmlName;
     } else {
       htmlName = reqPath.replace(/^\/|\/$/g, '').replace(/\//g, '.');
       htmlName += '.index.html';
+      htmlPath = reqPath+'/'+htmlName;
     }
     var localHtmlPath = path.join(localReqPath, htmlName);
-    var htmlPath = reqPath+htmlName;
   }
   if(goog.string.endsWith(reqPath, '.html')) {
     localHtmlPath = localReqPath;

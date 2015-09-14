@@ -12,8 +12,8 @@ var absolutizePathsInHtml = function($, htmlPath) {
       var href = $(this).attr('href');
       if(!(goog.string.startsWith(href, '/') ||
           goog.string.contains(href, '//'))) {
-        href = url.resolve(htmlPath, href);
-        href = ol3dsCfg.appPath + href;
+        href = url.resolve('/'+htmlPath, href);
+        href = ol3dsCfg.appPath + href.substr(1);
         $(this).attr('href', href);
       }
   });
@@ -21,7 +21,6 @@ var absolutizePathsInHtml = function($, htmlPath) {
       var src = $(this).attr('src');
       if(!(goog.string.startsWith(src, '/') ||
           goog.string.contains(src, '//'))) {
-        console.log(src, ol3dsCfg.appPath + url.resolve(htmlPath, src));
         src = url.resolve(htmlPath, src);
         src = ol3dsCfg.appPath + src;
         $(this).attr('src', src);
