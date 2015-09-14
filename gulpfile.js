@@ -1,7 +1,7 @@
 var gulp = require('gulp');
 var plugins = require('gulp-load-plugins')();
 require('./bower_components/closure-library/closure/goog/bootstrap/nodejs');
-var glob = require('glob');
+var runSequence = require('run-sequence');
 var ol3dsCfg = require('./config.js');
 
 
@@ -30,5 +30,7 @@ loadTask('dev-lint');
 loadTask('fix');
 loadTask('lint');
 
-gulp.task('fixlint', ['fix', 'lint']);
+gulp.task('fixlint', function(cb) {
+  runSequence('fix', 'lint', cb);
+});
 gulp.task('default', ['dev']);
