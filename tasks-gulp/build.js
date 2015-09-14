@@ -164,6 +164,31 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
     cb();
   });
 
+  gulp.task('build:serve', ['build:plovr', 'build:css:absolutize-paths'],
+      function (cb) {
+        //run dev server 
+        var server = plugins.liveServer(
+            './server/server-gulp-build.js',
+            undefined,
+            false
+        );
+        server.start();
+
+        //restart dev server 
+        gulp.watch('./server/server-gulp-build.js', server.start.bind(server));
+
+        cb();
+      });
+
+  gulp.task('build:open', ['build:serve'],
+      function(){
+        var url = 'http://localhost:'+ol3dsCfg.port + ol3dsCfg.appPath;
+        gulp.src(__filename)
+            .pipe(plugins.open({
+              uri: url
+            }));
+      });
+  
 
   gulp.task('build', [
     'build:clean',
@@ -171,7 +196,9 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
     'build:html',
     'build:plovr',
     'build:css:min',
-    'build:css:absolutize-paths'
+    'build:css:absolutize-paths',
+    'build:serve',
+    'build:open'
   ]);
 };
 

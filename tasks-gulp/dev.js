@@ -8,7 +8,6 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
   gulp.task('dev:serve:plovr', function (cb) {
     //start plovr server
     var args = ['-jar', 'bower_components/plovr/index.jar', 'serve'];
-    console.log(ol3dsCfg.plovrCfgs);
     goog.array.extend(args, ol3dsCfg.plovrCfgs);
     var plovr = spawn('java', args);
     var logData = function (data) {
@@ -26,23 +25,20 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
   gulp.task('dev:serve', function (cb) {
     //run dev server 
     var server = plugins.liveServer(
-        './server/server-gulp.js',
+        './server/server-gulp-dev.js',
         undefined,
         false
     );
     server.start();
  
     //restart dev server 
-    gulp.watch('./server/server-gulp.js', server.start.bind(server));
+    gulp.watch('./server/server-gulp-dev.js', server.start.bind(server));
     
     cb();
   });
 
   gulp.task('dev:open', function(){
-    var url = 'http://localhost:'+ol3dsCfg.port;
-    if(ol3dsCfg.appPath) {
-      url += ol3dsCfg.appPath
-    }
+    var url = 'http://localhost:'+ol3dsCfg.port + ol3dsCfg.appPath;
     gulp.src(__filename)
         .pipe(plugins.open({
           uri: url
