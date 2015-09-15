@@ -3,22 +3,28 @@
 ## Source files for client side
 * Source files for client are located in `src/client`
 * Everything is there together: HTML, JS, CSS, Plovr configuration, whatever you need
-* File names are in lower case
+* Directory names are in lower case matching regexp `^[a-z][a-z0-9]*$`
+* File names are in lower case matching regexp `^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$`
 * File names correspond with location in directory tree inside `src/client`
  * Example: All files inside `src/client/my/first/app` directory start with `my.first.app` string
-* If you use link to source file inside JS, **always use one string literal for file name starting with `./`**
+ * Yes, it is terrible redundancy. The reason is clear arrangement in your editor that usually show just filename in tab. If you have many files named `view.js`, you can simply become lost.
+* If you use **dir-relative or file-relative path** inside JS file, **always use one string literal starting with `./` and containing complete path and filename**
   * This is good: `var imgPath = './my.first.app.logo.png';`
   * This is bad: `var imgPath = 'my.first.app.logo.png';`
   * This is bad: `var imgPath = './my.first.app.logo' + '.png';`
+  * Because of this, ol3ds can simply replace all relative paths with absolute, which is necessary for HTML5 pushState.
 * Every `*.js` inside `src/client` directory is ready for compilation using Closure Compiler's advanced mode
   * **TODO: If it is not extern** (`*.externs.js`)
 * Namespace provided by `goog.provide` correspond with file name, case-insensitive
- * Example: All namespaces inside `my.first.app.js` file start with `my.first.app` or `my.first.App` or `my.first.APP` string
+ * Example: All namespaces inside `my.first.app.js` file start with `my.first.app`, `my.first.App`, `my.first.APP`, `my.first.app_`, `my.first.App_`, or `my.first.APP_` string
 
 ### Plovr
 * Every `*.plovr.json` is configuration file for Plovr
 * Every HTML file may refer to one Plovr config with the same name.
 * Reference to Plovr config is done by file name, not by `http://plovrserver/compile?id=...`
- * ** E.g. Inside `example.ol3.index.html` you can find `<script src="example.ol3.index.plovr.json" type="text/javascript"></script>`
+ * Example: Inside `example.ol3.index.html` you can find `<script src="example.ol3.index.plovr.json" type="text/javascript"></script>`
+* If there is a file `*.dev.plovr.json`, it is a plovr configuration used for dev process.
+ * Do not use link to `*.dev.plovr.json` inside HTML. Use link to main `*.plovr.json` and ol3ds will make the replacement automatically.
+
 * **TODO: Do not use CSS minification options of Plovr.** Use CSS [@import](https://developer.mozilla.org/en-US/docs/Web/CSS/@import) instead.
  * **TODO: Use @import only for import CSS files from inside `src/client`**
