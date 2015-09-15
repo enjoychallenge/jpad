@@ -29,6 +29,7 @@ example.ol3.index = function() {
     target: document.getElementById('map'),
     view: view
   });
+  var link = './../example.index.html';
 
 
 };

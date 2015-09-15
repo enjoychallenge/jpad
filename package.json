@@ -15,6 +15,8 @@
     "chai": "^3.2.0",
     "cheerio": "^0.19.0",
     "css": "^2.2.1",
+    "escodegen": "^1.7.0",
+    "estraverse": "^4.1.0",
     "express": "~4.13.0",
     "fs-extra": "^0.10.0",
     "glob": "^5.0.14",

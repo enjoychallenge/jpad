@@ -2,18 +2,15 @@ var through = require('through2');
 var gutil = require('gulp-util');
 var PluginError = gutil.PluginError;
 var StringDecoder = require('string_decoder').StringDecoder;
-var cheerio = require('cheerio');
 var ol3ds = require('./ol3ds.js');
+var acorn = require("acorn");
+var escodegen = require("escodegen");
+var estraverse = require("estraverse");
 
-var PLUGIN_NAME = 'gulp-html-path-abs';
 
-function htmlPathAbsolutizer(options) {
-//  options = options || {};
-//  var prefixText = options.prefixText;
-//  if (!prefixText) {
-//    throw new PluginError(PLUGIN_NAME, 'Missing prefix text!');
-//  }
-  
+var PLUGIN_NAME = 'gulp-js-path-abs';
+
+function jsPathAbsolutizer(options) {
   var decoder = new StringDecoder('utf8');
 
   // Creating a stream through which each file will pass
@@ -24,9 +21,13 @@ function htmlPathAbsolutizer(options) {
     }
     if (file.isBuffer()) {
       var intxt = decoder.write(file.contents);
-      var $ = cheerio.load(intxt);
-      ol3ds.absolutizePathsInHtml($, file.relative);
-      var outtxt = $.html();
+      
+      var tokens = [];
+      var ast = acorn.parse(intxt, {onToken: tokens});
+
+      ol3ds.absolutizePathsInJs(ast, file.relative);
+      var output = escodegen.generate(ast);
+      var outtxt = output;
       file.contents = new Buffer(outtxt);
     }
     if (file.isStream()) {
@@ -38,4 +39,4 @@ function htmlPathAbsolutizer(options) {
 }
 
 // Exporting the plugin main function
-module.exports = htmlPathAbsolutizer;
+module.exports = jsPathAbsolutizer;

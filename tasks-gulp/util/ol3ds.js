@@ -1,7 +1,12 @@
 'use strict';
 var url = require('url');
 var ol3dsCfg = require('../../config.js');
+var acorn = require("acorn");
+var escodegen = require("escodegen");
+var estraverse = require("estraverse");
 
+require('./../../bower_components/closure-library/closure/goog/bootstrap/nodejs');
+goog.require('goog.array');
 
 
 /**
@@ -28,6 +33,27 @@ var absolutizePathsInHtml = function($, htmlPath) {
   });
 };
 
+/**
+ * @param {type} $
+ */
+var absolutizePathsInJs = function(ast, htmlPath) {
+  estraverse.replace(ast, {
+    enter: function (node, parent) {
+      if(node.type==='Literal' &&
+          goog.isString(node.value) &&
+          goog.string.startsWith(node.value, './')) {
+        var src = node.value;
+        src = url.resolve('/'+htmlPath, src);
+        src = ol3dsCfg.appPath + src.substr(1);
+        //console.log('src', src);
+        node.value = src;
+        return node;
+      }
+    }
+  });
+};
+
 module.exports = {
-  absolutizePathsInHtml: absolutizePathsInHtml
+  absolutizePathsInHtml: absolutizePathsInHtml,
+  absolutizePathsInJs: absolutizePathsInJs
 };
