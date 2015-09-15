@@ -21,8 +21,8 @@ var absolutizePathsInHtml = function($, htmlPath) {
       var src = $(this).attr('src');
       if(!(goog.string.startsWith(src, '/') ||
           goog.string.contains(src, '//'))) {
-        src = url.resolve(htmlPath, src);
-        src = ol3dsCfg.appPath + src;
+        src = url.resolve('/'+htmlPath, src);
+        src = ol3dsCfg.appPath + src.substr(1);
         $(this).attr('src', src);
       }
   });

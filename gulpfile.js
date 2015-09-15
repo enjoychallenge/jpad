@@ -3,6 +3,7 @@ var plugins = require('gulp-load-plugins')();
 require('./bower_components/closure-library/closure/goog/bootstrap/nodejs');
 var runSequence = require('run-sequence');
 var ol3dsCfg = require('./config.js');
+var pathabs = require('./tasks-gulp/util/htmlpathabs.js');
 
 
 var argv = require('yargs')
@@ -32,5 +33,16 @@ loadTask('lint');
 
 gulp.task('fixlint', function(cb) {
   runSequence('fix', 'lint', cb);
+});
+
+gulp.task('pathabs', function() {
+  var src = './src/client/**/*.html';
+  var dest = './precompile/client';
+  return gulp.src(src)
+      //.pipe(newer(dest))
+      .pipe(pathabs())
+      .pipe(gulp.dest(dest));
+      
+
 });
 gulp.task('default', ['dev']);

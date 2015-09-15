@@ -68,8 +68,9 @@ app.use(appPath, function(req, res, next) {
         $(this).attr('src', src);
     });
     ol3ds.absolutizePathsInHtml($, htmlPath);
+    var outContent = $.html();
     res.set('Content-Type', 'text/html');
-    res.send($.html());
+    res.send(outContent);
     return;
   } else {
     next();
