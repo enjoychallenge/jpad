@@ -1,5 +1,7 @@
 'use strict';
 var spawn = require('child_process').spawn;
+var htmlpathabs = require('./util/htmlpathabs.js');
+var jspathabs = require('./util/jspathabs.js');
 require('./../bower_components/closure-library/closure/goog/bootstrap/nodejs');
 goog.require('goog.array');
 
@@ -44,7 +46,25 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
           uri: url
         }));
   });
+
+  gulp.task('htmlpathabs', function() {
+    var src = './src/client/**/*.html';
+    var dest = './temp/precompile/client';
+    return gulp.src(src)
+        //.pipe(newer(dest))
+        .pipe(htmlpathabs())
+        .pipe(gulp.dest(dest));
+  });
   
+  gulp.task('jspathabs', function() {
+    var src = './src/client/**/*.js';
+    var dest = './temp/precompile/client';
+    return gulp.src(src)
+        //.pipe(newer(dest))
+        .pipe(jspathabs())
+        .pipe(gulp.dest(dest));
+  });
+
   gulp.task('dev', ['dev:serve:plovr', 'dev:serve', 'dev:open']);
 };
 

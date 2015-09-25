@@ -10,9 +10,24 @@ var fs = require("fs-extra");
 var cheerio = require("cheerio");
 var ol3dsCfg = require('./../config.js');
 var ol3ds =  require('../tasks-gulp/util/ol3ds.js');
+var gulp = require('gulp');
+var gulpPlugins = require('gulp-load-plugins')();
 
 var appPath = ol3dsCfg.appPath;
 var port = ol3dsCfg.port;
+
+require('./../tasks-gulp/dev')(gulp, gulpPlugins, ol3dsCfg);
+
+app.use('/_plovr', function(req, res, next) {
+  var localReqPath = __dirname+'/../temp/precompile/client/index.html';
+  console.log('plovrrrrrrrrrrrrrr');
+//  console.log('not done', fs.existsSync(localReqPath));
+//  gulp.start('htmlpathabs', function(err) {
+//    console.log('done?', fs.existsSync(localReqPath));
+//    
+//  });
+//  next();
+});
 
 goog.array.forEach(ol3dsCfg.libMappings, function(lm) {
   var physdir = (__dirname+'/../'+lm.src).replace(/\//g, path.sep);
@@ -51,27 +66,33 @@ app.use(appPath, function(req, res, next) {
       next();
       return;
     }
-    var fcontent = fs.readFileSync(localHtmlPath);
-    var $ = cheerio.load(fcontent);
-    //replace links to *.plovr.json with plovr server URL
-    $('script[src$=\'.plovr.json\']').each(function(i, elem) {
-        var src = $(this).attr('src');
-        var srcBasename = path.basename(src, '.plovr.json');
-        var plovrId = srcBasename.replace(/\./g, '-');
-        var devPlovrName = srcBasename+'.dev.plovr.json';
-        var devPlovrPath =
-            path.resolve(path.dirname(localHtmlPath), devPlovrName);
-        if(fs.existsSync(devPlovrPath)) {
-          plovrId += '-dev';
-        }
-        src = 'http://localhost:9810/compile?id='+plovrId;
-        $(this).attr('src', src);
+    gulp.start('htmlpathabs', function(err) {
+      var precompiledPath =
+          path.relative(__dirname+'/../src/client/', localHtmlPath);
+      precompiledPath = __dirname+'/../temp/precompile/client/'+precompiledPath;
+      precompiledPath = path.normalize(precompiledPath);
+      
+      var fcontent = fs.readFileSync(precompiledPath);
+      var $ = cheerio.load(fcontent);
+      //replace links to *.plovr.json with plovr server URL
+      $('script[src$=\'.plovr.json\']').each(function(i, elem) {
+          var src = $(this).attr('src');
+          var srcBasename = path.basename(src, '.plovr.json');
+          var plovrId = srcBasename.replace(/\./g, '-');
+          var devPlovrName = srcBasename+'.dev.plovr.json';
+          var devPlovrPath =
+              path.resolve(path.dirname(localHtmlPath), devPlovrName);
+          if(fs.existsSync(devPlovrPath)) {
+            plovrId += '-dev';
+          }
+          src = 'http://localhost:9810/compile?id='+plovrId;
+          $(this).attr('src', src);
+      });
+      var outContent = $.html();
+      res.set('Content-Type', 'text/html');
+      res.send(outContent);
+      return;
     });
-    ol3ds.absolutizePathsInHtml($, htmlPath);
-    var outContent = $.html();
-    res.set('Content-Type', 'text/html');
-    res.send(outContent);
-    return;
   } else {
     next();
   }
