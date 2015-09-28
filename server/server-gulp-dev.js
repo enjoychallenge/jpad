@@ -10,6 +10,7 @@ var fs = require("fs-extra");
 var cheerio = require("cheerio");
 var ol3dsCfg = require('./../config.js');
 var ol3ds =  require('../tasks-gulp/util/ol3ds.js');
+var request = require("request");
 var gulp = require('gulp');
 var gulpPlugins = require('gulp-load-plugins')();
 
@@ -18,15 +19,45 @@ var port = ol3dsCfg.port;
 
 require('./../tasks-gulp/dev')(gulp, gulpPlugins, ol3dsCfg);
 
-app.use('/_plovr', function(req, res, next) {
-  var localReqPath = __dirname+'/../temp/precompile/client/index.html';
-  console.log('plovrrrrrrrrrrrrrr');
-//  console.log('not done', fs.existsSync(localReqPath));
-//  gulp.start('htmlpathabs', function(err) {
-//    console.log('done?', fs.existsSync(localReqPath));
-//    
-//  });
-//  next();
+//deal with compiled JS files
+app.use('/_compile', function(req, res, next) {
+  var localSrcPath = __dirname+'/../src/client'+req.path;
+  localSrcPath = path.normalize(localSrcPath);
+  if(!fs.existsSync(localSrcPath)) {
+    next();
+    return;
+  }
+  var localDestPath = __dirname+'/../temp/compile/client'+req.path;
+  localDestPath = path.normalize(localDestPath);
+  localDestPath = path.join(
+      path.dirname(localDestPath),
+      path.basename(localDestPath, '.plovr.json')+'.js'
+  );
+  if(fs.existsSync(localDestPath)) {
+    fs.createReadStream(localDestPath).pipe(res);
+    return;
+  }
+  
+  var basename = path.basename(localSrcPath, '.plovr.json');
+  var plovrId = basename.replace(/\./g, '-');
+  var plovrUrl = 'http://localhost:9810/compile?id='+plovrId;
+  
+  fs.ensureDirSync(path.dirname(localDestPath));
+  
+  var plovrMode = ol3ds.plovr.getCompilerMode(localSrcPath);
+  if(plovrMode==='RAW') {
+    var r = request(plovrUrl, function (error, response, body) {
+      body = body.replace("var path = '/compile';", "var path = '/_compile';");
+      res.send(body);
+      fs.writeFileSync(localDestPath, body, {encoding: 'utf-8'});
+      return;
+    });
+  } else {
+    var r = request(plovrUrl);
+    r.pipe(res);
+    r.pipe(fs.createWriteStream(localDestPath));
+    return;
+  }
 });
 
 goog.array.forEach(ol3dsCfg.libMappings, function(lm) {
@@ -74,18 +105,24 @@ app.use(appPath, function(req, res, next) {
       
       var fcontent = fs.readFileSync(precompiledPath);
       var $ = cheerio.load(fcontent);
-      //replace links to *.plovr.json with plovr server URL
+      //replace links to *.plovr.json
       $('script[src$=\'.plovr.json\']').each(function(i, elem) {
           var src = $(this).attr('src');
+          var srcName = path.basename(src);
+          var srcPlovrPath =
+              path.resolve(path.dirname(localHtmlPath), srcName);
           var srcBasename = path.basename(src, '.plovr.json');
-          var plovrId = srcBasename.replace(/\./g, '-');
           var devPlovrName = srcBasename+'.dev.plovr.json';
           var devPlovrPath =
               path.resolve(path.dirname(localHtmlPath), devPlovrName);
           if(fs.existsSync(devPlovrPath)) {
-            plovrId += '-dev';
+            var plovrPath = devPlovrPath;
+          } else {
+            plovrPath = srcPlovrPath;
           }
-          src = 'http://localhost:9810/compile?id='+plovrId;
+          plovrPath = path.relative(__dirname+'/../src/client/', plovrPath);
+          plovrPath = '/_compile/'+plovrPath.replace(/\\/g, '/');
+          src = plovrPath;
           $(this).attr('src', src);
       });
       var outContent = $.html();
