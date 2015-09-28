@@ -34,7 +34,9 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
     server.start();
  
     //restart dev server 
-    gulp.watch('./server/server-gulp-dev.js', server.start.bind(server));
+    gulp.watch('./server/server-gulp-dev.js', function() {
+        server.start.apply(server);
+    });
     
     cb();
   });
