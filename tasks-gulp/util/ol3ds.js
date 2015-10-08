@@ -56,10 +56,50 @@ var absolutizePathsInJs = function(ast, jsPath) {
   });
 };
 
+var plovr = {};
+
+/**
+ * @param {type} ast
+ */
+plovr.updatePaths = function(json, plovrSrcPath, plovrDestPath) {
+  var srcDir = path.dirname(plovrSrcPath);
+  var destDir = path.dirname(plovrDestPath);
+  var srcClientDir = path.resolve('./src/client');
+  var replacePath = function(pth) {
+    var p = path.resolve(srcDir, pth);
+    p = path.relative(destDir, p);
+    p = p.replace(/\\/g, '/');
+    return p;
+  };
+  
+  if(json['closure-library']) {
+    json['closure-library'] = replacePath(json['closure-library']);
+  }
+  if(json["externs"]) {
+    json["externs"] = goog.array.map(json["externs"], function(p) {
+      return replacePath(p);
+    })
+  }
+  if(json["paths"]) {
+    json["paths"] = goog.array.map(json["paths"], function(p) {
+      p = path.normalize(path.resolve(srcDir, p));
+      var rp = path.normalize(path.relative(srcClientDir, p));
+      if(rp.indexOf('..')!==0 && p.indexOf(srcClientDir)===0) {
+        p = path.join('./precompile/client', rp);
+        p = path.resolve(p);
+        p = path.relative(destDir, p).replace(/\\/g, '/');
+      } else {
+        p = replacePath(p);
+      }
+      return p;
+    });
+  }
+};
+
 /**
  * @param {string} plovrJsonPath
  */
-var getCompilerMode = function(plovrJsonPath) {
+plovr.getCompilerMode = function(plovrJsonPath) {
   
   var getMode = function(pth) {
     var fcontent = fs.readFileSync(pth);
@@ -80,7 +120,5 @@ var getCompilerMode = function(plovrJsonPath) {
 module.exports = {
   absolutizePathsInHtml: absolutizePathsInHtml,
   absolutizePathsInJs: absolutizePathsInJs,
-  plovr: {
-    getCompilerMode: getCompilerMode
-  }
+  plovr: plovr
 };

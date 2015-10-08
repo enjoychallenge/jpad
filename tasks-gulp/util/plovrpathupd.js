@@ -6,11 +6,13 @@ var ol3ds = require('./ol3ds.js');
 var acorn = require("acorn");
 var escodegen = require("escodegen");
 var estraverse = require("estraverse");
+var path = require("path");
+
 
 
 var PLUGIN_NAME = 'gulp-js-path-abs';
 
-function jsPathAbsolutizer(options) {
+function plovrPathUpdater(options) {
   var decoder = new StringDecoder('utf8');
 
   // Creating a stream through which each file will pass
@@ -21,12 +23,16 @@ function jsPathAbsolutizer(options) {
     }
     if (file.isBuffer()) {
       var intxt = decoder.write(file.contents);
+      var json = JSON.parse(intxt);
       
-      var tokens = [];
-      var ast = acorn.parse(intxt, {onToken: tokens});
+      var srcPath = file.path;
+      var destPath = path.relative('./src/client', srcPath);
+      destPath = path.join('./precompile/client', destPath);
+      destPath = path.resolve('.', destPath);
+      //console.log(destPath);
 
-      ol3ds.absolutizePathsInJs(ast, file.relative);
-      var output = escodegen.generate(ast);
+      ol3ds.plovr.updatePaths(json, srcPath, destPath);
+      var output = JSON.stringify(json, null, '  ');
       var outtxt = output;
       file.contents = new Buffer(outtxt);
     }
@@ -39,4 +45,4 @@ function jsPathAbsolutizer(options) {
 }
 
 // Exporting the plugin main function
-module.exports = jsPathAbsolutizer;
+module.exports = plovrPathUpdater;

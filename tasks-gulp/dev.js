@@ -2,6 +2,7 @@
 var spawn = require('child_process').spawn;
 var htmlpathabs = require('./util/htmlpathabs.js');
 var jspathabs = require('./util/jspathabs.js');
+var plovrpathupd = require('./util/plovrpathupd.js');
 require('./../bower_components/closure-library/closure/goog/bootstrap/nodejs');
 goog.require('goog.array');
 
@@ -67,6 +68,15 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
         .pipe(gulp.dest(dest));
   });
 
+  gulp.task('plovrpathupd', function() {
+    var src = './src/client/**/*.plovr.json';
+    var dest = './temp/precompile/client';
+    return gulp.src(src)
+        //.pipe(newer(dest))
+        .pipe(plovrpathupd())
+        .pipe(gulp.dest(dest));
+  });
+  
   gulp.task('dev', ['dev:serve:plovr', 'dev:serve', 'dev:open']);
 };
 
