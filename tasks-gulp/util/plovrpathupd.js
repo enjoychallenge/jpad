@@ -27,7 +27,7 @@ function plovrPathUpdater(options) {
       
       var srcPath = file.path;
       var destPath = path.relative('./src/client', srcPath);
-      destPath = path.join('./precompile/client', destPath);
+      destPath = path.join('./temp/precompile/client', destPath);
       destPath = path.resolve('.', destPath);
       //console.log(destPath);
 

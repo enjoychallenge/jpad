@@ -85,7 +85,7 @@ plovr.updatePaths = function(json, plovrSrcPath, plovrDestPath) {
       p = path.normalize(path.resolve(srcDir, p));
       var rp = path.normalize(path.relative(srcClientDir, p));
       if(rp.indexOf('..')!==0 && p.indexOf(srcClientDir)===0) {
-        p = path.join('./precompile/client', rp);
+        p = path.join('./temp/precompile/client', rp);
         p = path.resolve(p);
         p = path.relative(destDir, p).replace(/\\/g, '/');
         if(rp === '.') {
