@@ -10,6 +10,7 @@ var glob = require('glob');
 
 require('./../../bower_components/closure-library/closure/goog/bootstrap/nodejs');
 goog.require('goog.array');
+goog.require('goog.object');
 goog.require('goog.asserts');
 
 
@@ -119,6 +120,41 @@ plovr.getCompilerMode = function(plovrJsonPath) {
     }
   };
   return getMode(plovrJsonPath);
+};
+
+/**
+ * @param {string} srcCfgPath
+ */
+plovr.getDependentConfigs = function(srcCfgPath) {
+  srcCfgPath = path.normalize(srcCfgPath);
+  var pths = plovr.getConfigs();
+  goog.asserts.assert(goog.array.contains(pths, srcCfgPath));
+  
+  var depLinks = {};
+  
+  goog.array.forEach(pths, function(pth) {
+    var fcontent = fs.readFileSync(pth);
+    var json = JSON.parse(fcontent);
+    var inherits = json['inherits'];
+    if(inherits) {
+      var p = path.resolve(path.dirname(pth), inherits);
+      if(!goog.object.containsKey(p)) {
+        depLinks[p] = [];
+      }
+      depLinks[p].push(pth);
+    } else {
+      depLinks[pth] = [];
+    }
+  });
+  
+  var result = [];
+  var deps = depLinks[srcCfgPath].concat();
+  while(deps.length) {
+    var p = shift();
+    result.shift(p);
+    goog.array.extend(deps, depLinks[p]);
+  };
+  return result;
 };
 
 plovr.getConfigs = function() {
