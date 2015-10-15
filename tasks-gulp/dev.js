@@ -3,29 +3,36 @@ var spawn = require('child_process').spawn;
 var htmlpathabs = require('./util/htmlpathabs.js');
 var jspathabs = require('./util/jspathabs.js');
 var plovrpathupd = require('./util/plovrpathupd.js');
+var vinylPaths = require('vinyl-paths');
+var path = require("path");
+var fs = require("fs-extra");
+var ol3ds =  require('../tasks-gulp/util/ol3ds.js');
 require('./../bower_components/closure-library/closure/goog/bootstrap/nodejs');
 goog.require('goog.array');
 
 module.exports = function (gulp, plugins, ol3dsCfg) {
+  var plovr;
   
-  gulp.task('dev:serve:plovr', function (cb) {
+  gulp.task('dev:serve:plovr', ['plovrpathupd'], function (cb) {
     //start plovr server
     var args = ['-jar', 'bower_components/plovr/index.jar', 'serve'];
-    goog.array.extend(args, ol3dsCfg.plovrCfgs);
-    var plovr = spawn('java', args);
+    goog.array.extend(args, ol3ds.plovr.getConfigs());
+    plovr = spawn('java', args);
     var logData = function (data) {
       console.log(data.toString());
     };
     plovr.stdout.on('data', logData);
     plovr.stderr.on('data', logData);
     plovr.on('close', function (code) {
-      console.log('plovr exited with code ' + code);
+      if(code!==null) { 
+       console.log('plovr exited with code ' + code);
+      }
     });
     
     cb();
   });
   
-  gulp.task('dev:serve', function (cb) {
+  gulp.task('dev:serve', ['dev:serve:plovr'], function (cb) {
     //run dev server 
     var server = plugins.liveServer(
         './server/server-gulp-dev.js',
@@ -42,7 +49,7 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
     cb();
   });
 
-  gulp.task('dev:open', function(){
+  gulp.task('dev:open', ['dev:serve'], function(){
     var url = 'http://localhost:'+ol3dsCfg.port + ol3dsCfg.appPath;
     gulp.src(__filename)
         .pipe(plugins.open({
@@ -72,11 +79,41 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
     var src = './src/client/**/*.plovr.json';
     var dest = './temp/precompile/client';
     return gulp.src(src)
-        //.pipe(newer(dest))
+        .pipe(plugins.newer(dest))
         .pipe(plovrpathupd())
         .pipe(gulp.dest(dest));
   });
   
-  gulp.task('dev', ['dev:serve:plovr', 'dev:serve', 'dev:open']);
+  gulp.task('dev:watch:plovr', ['dev:serve:plovr'], function() {
+    var src = './src/client/**/*.plovr.json';
+    var dest = './temp/precompile/client';
+    
+    return plugins.watch(src)
+      .pipe(vinylPaths(function(paths) {
+        paths = goog.isArray(paths) ? paths : [paths];
+        goog.array.forEach(paths, function(p) {
+          var srcp = path.relative('./src/client', p);
+          var destp = path.join(dest, srcp);
+          if(!fs.existsSync(srcp)) {
+            fs.unlinkSync(destp);
+          }
+        }, this);
+        if(plovr) {
+          console.log('Stopping plovr.');
+          plovr.kill();
+          plovr = null;
+        }
+        gulp.start(['dev:serve:plovr']);
+        return Promise.resolve();
+    }));
+
+  });
+  
+  gulp.task('dev', [
+    'dev:serve:plovr',
+    'dev:serve',
+    'dev:open',
+    'dev:watch:plovr'
+  ]);
 };
 

@@ -1,17 +1,9 @@
 'use strict';
-var glob = require('glob');
 
-var plovrPattern = 'src/client/**/*.plovr.json';
 var ol3ds = {
   appPath: '/path/to/application/',
-  plovrHtmls: glob.sync('src/client/**/*.html'),
-  plovrCfgs: glob.sync(plovrPattern),
-  mainPlovrCfgs: glob.sync(plovrPattern, {
-    ignore: [
-      'src/client/**/*.dev.plovr.json',
-      'src/client/**/*.modon.plovr.json'
-    ]
-  }),
+  plovrPattern: 'src/client/**/*.plovr.json',
+  plovrHtmlPattern: 'src/client/**/*.html',
   port: 9000,
   libMappings: [
     {

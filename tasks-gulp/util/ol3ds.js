@@ -6,6 +6,7 @@ var escodegen = require("escodegen");
 var estraverse = require("estraverse");
 var fs = require("fs-extra");
 var path = require("path");
+var glob = require('glob');
 
 require('./../../bower_components/closure-library/closure/goog/bootstrap/nodejs');
 goog.require('goog.array');
@@ -118,6 +119,23 @@ plovr.getCompilerMode = function(plovrJsonPath) {
     }
   };
   return getMode(plovrJsonPath);
+};
+
+plovr.getConfigs = function() {
+  return glob.sync(ol3dsCfg.plovrPattern);
+};
+
+plovr.getMainConfigs = function() {
+  return glob.sync(ol3dsCfg.plovrPattern, {
+    ignore: [
+      'src/client/**/*.dev.plovr.json',
+      'src/client/**/*.modon.plovr.json'
+    ]
+  });
+};
+
+plovr.getHtmls = function() {
+  return glob.sync(ol3dsCfg.plovrHtmlPattern);
 };
 
 module.exports = {

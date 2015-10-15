@@ -46,7 +46,7 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
   });
 
   gulp.task('build:html', ['build:copy'], function (cb) {
-    goog.array.forEach(ol3dsCfg.plovrHtmls, function(htmlPath) {
+    goog.array.forEach(ol3ds.plovr.getHtmls(), function(htmlPath) {
       var localHtmlPath = path.resolve('.', htmlPath);
       var fcontent = fs.readFileSync(localHtmlPath);
       var $ = cheerio.load(fcontent);
@@ -79,11 +79,12 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
 
   gulp.task('build:plovr', ['build:copy'], function (cb) {
     var useMap = ol3dsCfg.generateSourceMaps;
-    var ncmds = ol3dsCfg.mainPlovrCfgs.length;
+    var mainPlovrCfgs = ol3ds.plovr.getMainConfigs();
+    var ncmds = mainPlovrCfgs.length;
     if(!ncmds) {
       cb();
     }
-    goog.array.forEach(ol3dsCfg.mainPlovrCfgs, function(pth) {
+    goog.array.forEach(mainPlovrCfgs, function(pth) {
       var dst = pth.replace('src/client/', 'build/client/');
       dst = dst.replace('.plovr.json', '.js');
       fs.mkdirsSync(path.dirname(dst));
