@@ -30,6 +30,7 @@ example.ol3.index = function() {
     view: view
   });
   var link = './../example.index.html';
+  console.log(link);
 
 
 };

@@ -21,7 +21,7 @@ require('./../tasks-gulp/dev')(gulp, gulpPlugins, ol3dsCfg);
 
 //deal with compiled JS files
 app.use('/_compile', function(req, res, next) {
-  var localSrcPath = __dirname+'/../src/client'+req.path;
+  var localSrcPath = __dirname+'/../temp/precompile/client'+req.path;
   localSrcPath = path.normalize(localSrcPath);
   if(!fs.existsSync(localSrcPath)) {
     next();

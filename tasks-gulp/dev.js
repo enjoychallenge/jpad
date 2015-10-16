@@ -7,16 +7,25 @@ var vinylPaths = require('vinyl-paths');
 var path = require("path");
 var fs = require("fs-extra");
 var ol3ds =  require('../tasks-gulp/util/ol3ds.js');
+var glob = require('glob');
 require('./../bower_components/closure-library/closure/goog/bootstrap/nodejs');
 goog.require('goog.array');
 
 module.exports = function (gulp, plugins, ol3dsCfg) {
   var plovr;
   
-  gulp.task('dev:serve:plovr', ['plovrpathupd'], function (cb) {
+  //gulp.task('dev:start', []);
+  
+  gulp.task('dev:clean-temp', function (cb) {
+    fs.removeSync('temp');
+    cb();
+  });
+  
+  gulp.task('dev:serve:plovr', ['precompile:plovr', 'precompile:js'], function (cb) {
     //start plovr server
     var args = ['-jar', 'bower_components/plovr/index.jar', 'serve'];
-    goog.array.extend(args, ol3ds.plovr.getConfigs());
+    var plovrConfigs = ol3ds.plovr.getPrecompileConfigs();
+    goog.array.extend(args, plovrConfigs);
     plovr = spawn('java', args);
     var logData = function (data) {
       console.log(data.toString());
@@ -61,21 +70,21 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
     var src = './src/client/**/*.html';
     var dest = './temp/precompile/client';
     return gulp.src(src)
-        //.pipe(newer(dest))
+        .pipe(plugins.newer(dest))
         .pipe(htmlpathabs())
         .pipe(gulp.dest(dest));
   });
   
-  gulp.task('jspathabs', function() {
+  gulp.task('precompile:js', function() {
     var src = './src/client/**/*.js';
     var dest = './temp/precompile/client';
     return gulp.src(src)
-        //.pipe(newer(dest))
+        .pipe(plugins.newer(dest))
         .pipe(jspathabs())
         .pipe(gulp.dest(dest));
   });
 
-  gulp.task('plovrpathupd', function() {
+  gulp.task('precompile:plovr', function() {
     var src = './src/client/**/*.plovr.json';
     var dest = './temp/precompile/client';
     return gulp.src(src)
@@ -84,6 +93,21 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
         .pipe(gulp.dest(dest));
   });
   
+  gulp.task('dev:watch:js', ['dev:serve:plovr'], function() {
+    var src = './src/client/**/*.js';
+    return plugins.watch(src, function() {
+      gulp.start(['precompile:js', 'compile:delete-js']);
+    });
+  });
+
+  gulp.task('compile:delete-js', function(cb) {
+    var jss = glob.sync('./temp/compile/**/*.js');
+    goog.array.forEach(jss, function(js) {
+      fs.unlinkSync(js);
+    });
+    cb();
+  });
+
   gulp.task('dev:watch:plovr', ['dev:serve:plovr'], function() {
     var src = './src/client/**/*.plovr.json';
     var dest = './temp/precompile/client';
@@ -124,11 +148,13 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
 
   });
   
-  gulp.task('dev', [
-    'dev:serve:plovr',
-    'dev:serve',
-    'dev:open',
-    'dev:watch:plovr'
-  ]);
+  gulp.task('dev', ['dev:clean-temp'], function() {
+    gulp.start([
+      'dev:serve',
+      'dev:open',
+      'dev:watch:plovr',
+      'dev:watch:js'
+    ]);
+  });
 };
 
