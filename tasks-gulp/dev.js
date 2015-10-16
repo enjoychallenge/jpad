@@ -74,8 +74,8 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
   });
   
   gulp.task('precompile:js', function() {
-    var src = './src/client/**/*.js';
-    var dest = './temp/precompile/client';
+    var src = ['src/client/**/*.js', '!src/client/**/*.externs.js'];
+    var dest = 'temp/precompile/client';
     return gulp.src(src)
         .pipe(plugins.newer(dest))
         .pipe(jspathabs())
