@@ -89,14 +89,29 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
     var dest = './temp/precompile/client';
     
     return plugins.watch(src)
-      .pipe(vinylPaths(function(paths) {
-        paths = goog.isArray(paths) ? paths : [paths];
-        goog.array.forEach(paths, function(p) {
-          var srcp = path.relative('./src/client', p);
+      .pipe(vinylPaths(function(plovrCfgs) {
+        plovrCfgs = goog.isArray(plovrCfgs) ? plovrCfgs : [plovrCfgs];
+        goog.array.forEach(plovrCfgs, function(plovrCfg) {
+          var srcp = path.relative('./src/client', plovrCfg);
           var destp = path.join(dest, srcp);
           if(!fs.existsSync(srcp)) {
             fs.unlinkSync(destp);
           }
+          //delete compiled JS files
+          var depCfgs = ol3ds.plovr.getDependentConfigs(plovrCfg);
+          var affectedCfgs = depCfgs.concat();
+          affectedCfgs.push(path.normalize(path.resolve('.', plovrCfg)));
+          
+          goog.array.forEach(affectedCfgs, function(affCfg) {
+            var relCfg = path.relative('./src/', affCfg);
+            var affScript = path.join('./temp/compile', relCfg);
+            affScript = path.join(path.dirname(affScript),
+                path.basename(affScript, '.plovr.json')+'.js');
+            if(fs.existsSync(affScript)) {
+              fs.unlinkSync(affScript);
+            }
+            
+          });
         }, this);
         if(plovr) {
           console.log('Stopping plovr.');
