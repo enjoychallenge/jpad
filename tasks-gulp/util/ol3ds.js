@@ -165,6 +165,14 @@ plovr.getConfigs = function() {
   return glob.sync(ol3dsCfg.plovrPattern);
 };
 
+plovr.getPrecompileConfigs = function() {
+  var cfgs = plovr.getConfigs();
+  var result = goog.array.map(cfgs, function(cfg) {
+    return plovr.srcToPrecompilePath(cfg);
+  });
+  return result;
+};
+
 plovr.getMainConfigs = function() {
   return glob.sync(ol3dsCfg.plovrPattern, {
     ignore: [
@@ -176,6 +184,12 @@ plovr.getMainConfigs = function() {
 
 plovr.getHtmls = function() {
   return glob.sync(ol3dsCfg.plovrHtmlPattern);
+};
+
+plovr.srcToPrecompilePath = function(srcCfgPath) {
+  var src = path.relative('./src', srcCfgPath);
+  var result = path.join('./temp/precompile', src);
+  return result;
 };
 
 module.exports = {
