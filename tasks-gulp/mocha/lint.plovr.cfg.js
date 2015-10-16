@@ -21,14 +21,22 @@ describe('plovr configuration', function() {
       var fcontent = fs.readFileSync(completeFpath);
       var fjson = JSON.parse(fcontent);
     
-     it('should have "id" suitable for file name', function () {
-       var correctId =  fname.replace(/\./g, '-');
-       var plovrId = fjson.id;
-       var correctfname =  plovrId.replace(/-/g, '.')+'.plovr.json';
+      it('should have "id" suitable for file name', function () {
+        var correctId =  fname.replace(/\./g, '-');
+        var plovrId = fjson.id;
+        var correctfname =  plovrId.replace(/-/g, '.')+'.plovr.json';
         assert.equal(correctId, plovrId,
             'should be either located in another file (' +correctfname+
             ') or should have "id" set to "'+correctId+'"');
       });
+      var inputs = fjson['inputs'];
+      if(inputs) {
+        it('should have one "inputs" suitable for file name', function () {
+          var correctInput = fname + '.js';
+          assert.equal(inputs.length, 1);
+          assert.equal(inputs[0], correctInput);
+        });
+      }
     });
   });
 });
