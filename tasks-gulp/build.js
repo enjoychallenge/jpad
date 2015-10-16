@@ -77,16 +77,20 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
     cb();
   });
 
-  gulp.task('build:plovr', ['build:copy'], function (cb) {
+  gulp.task('build:plovr',
+      ['build:copy', 'precompile:js', 'precompile:plovr'],
+      function (cb) {
     var useMap = ol3dsCfg.generateSourceMaps;
-    var mainPlovrCfgs = ol3ds.plovr.getMainConfigs();
+    var mainPlovrCfgs = ol3ds.plovr.getPrecompileMainConfigs();
     var ncmds = mainPlovrCfgs.length;
     if(!ncmds) {
       cb();
     }
     goog.array.forEach(mainPlovrCfgs, function(pth) {
-      var dst = pth.replace('src/client/', 'build/client/');
-      dst = dst.replace('.plovr.json', '.js');
+      var dst = path.relative('temp/precompile/client', pth);
+      dst = path.join('build/client', dst);
+      dst = path.join(path.dirname(dst),
+          path.basename(dst, '.plovr.json'))+'.js';
       fs.mkdirsSync(path.dirname(dst));
       var cmd = 'java -jar bower_components/plovr/index.jar build ';
       if(useMap) {

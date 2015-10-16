@@ -14,8 +14,6 @@ goog.require('goog.array');
 module.exports = function (gulp, plugins, ol3dsCfg) {
   var plovr;
   
-  //gulp.task('dev:start', []);
-  
   gulp.task('dev:clean-temp', function (cb) {
     fs.removeSync('temp');
     cb();

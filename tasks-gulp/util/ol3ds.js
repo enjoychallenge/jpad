@@ -173,6 +173,14 @@ plovr.getPrecompileConfigs = function() {
   return result;
 };
 
+plovr.getPrecompileMainConfigs = function() {
+  var cfgs = plovr.getMainConfigs();
+  var result = goog.array.map(cfgs, function(cfg) {
+    return plovr.srcToPrecompilePath(cfg);
+  });
+  return result;
+};
+
 plovr.getMainConfigs = function() {
   return glob.sync(ol3dsCfg.plovrPattern, {
     ignore: [
