@@ -126,8 +126,11 @@ plovr.getCompilerMode = function(plovrJsonPath) {
  * @param {string} srcCfgPath
  */
 plovr.getDependentConfigs = function(srcCfgPath) {
-  srcCfgPath = path.normalize(srcCfgPath);
+  srcCfgPath = path.normalize(path.resolve('.', srcCfgPath));
   var pths = plovr.getConfigs();
+  pths = goog.array.map(pths, function(p) {
+    return path.normalize(path.resolve('.', p));
+  });
   goog.asserts.assert(goog.array.contains(pths, srcCfgPath));
   
   var depLinks = {};
@@ -138,11 +141,12 @@ plovr.getDependentConfigs = function(srcCfgPath) {
     var inherits = json['inherits'];
     if(inherits) {
       var p = path.resolve(path.dirname(pth), inherits);
-      if(!goog.object.containsKey(p)) {
+      if(!goog.object.containsKey(depLinks, p)) {
         depLinks[p] = [];
       }
       depLinks[p].push(pth);
-    } else {
+    }
+    if(!depLinks[pth]) {
       depLinks[pth] = [];
     }
   });
@@ -150,8 +154,8 @@ plovr.getDependentConfigs = function(srcCfgPath) {
   var result = [];
   var deps = depLinks[srcCfgPath].concat();
   while(deps.length) {
-    var p = shift();
-    result.shift(p);
+    var p = deps.shift();
+    result.push(p);
     goog.array.extend(deps, depLinks[p]);
   };
   return result;
