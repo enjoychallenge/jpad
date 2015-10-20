@@ -9,8 +9,8 @@
 * If you use link to source file, **always use one string literal for file name** (especially inside JS)
   * This is good: `var imgPath = 'my.first.app.logo.png';`
   * This is bad: `var imgPath = 'my.first.app' + '.logo.png';`
-* Every `*.js` inside `src/client` directory is ready for compilation using Closure Compiler's advanced mode
-  * **TODO: If it is not extern** (`*.externs.js`)
+* Every `*.js` inside `src/client` directory is ready for compilation using Closure Compiler's advanced mode. Exceptions:
+  * `*.externs.js` are treated as [externs files](https://developers.google.com/closure/compiler/docs/api-tutorial3). Extern files are not precompiled, but it must be specified ex externs inside *.plovr.json.
 * Namespace provided by `goog.provide` correspond with file name, case-insensitive
  * Example: All namespaces inside `my.first.app.js` file start with `my.first.app` or `my.first.App` or `my.first.APP` string
 * Every `*.plovr.json` is configuration file for Plovr
