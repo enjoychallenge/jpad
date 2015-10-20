@@ -14,7 +14,7 @@
   * This is bad: `var imgPath = './my.first.app.logo' + '.png';`
   * Because of this, ol3ds can simply replace all relative paths with absolute, which is necessary for HTML5 pushState.
 * Every `*.js` inside `src/client` directory is ready for compilation using Closure Compiler's advanced mode. Exceptions:
-  * `*.externs.js` are treated as [externs files](https://developers.google.com/closure/compiler/docs/api-tutorial3).
+  * `*.externs.js` is excluded from compilation, it shoud be treated as [externs files](https://developers.google.com/closure/compiler/docs/api-tutorial3).
 * Namespace provided by `goog.provide` correspond with file name, case-insensitive
  * Example: All namespaces inside `my.first.app.js` file start with `my.first.app`, `my.first.App`, `my.first.APP`, `my.first.app_`, `my.first.App_`, or `my.first.APP_` string
 
