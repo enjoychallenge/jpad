@@ -3,9 +3,7 @@ var gutil = require('gulp-util');
 var PluginError = gutil.PluginError;
 var StringDecoder = require('string_decoder').StringDecoder;
 var ol3ds = require('./ol3ds.js');
-var acorn = require("acorn");
-var escodegen = require("escodegen");
-var estraverse = require("estraverse");
+var recast = require("recast");
 
 
 var PLUGIN_NAME = 'gulp-js-path-abs';
@@ -22,11 +20,10 @@ function jsPathAbsolutizer(options) {
     if (file.isBuffer()) {
       var intxt = decoder.write(file.contents);
       
-      var tokens = [];
-      var ast = acorn.parse(intxt, {onToken: tokens});
+      var ast = recast.parse(intxt);
 
       ol3ds.absolutizePathsInJs(ast, file.relative);
-      var output = escodegen.generate(ast);
+      var output = recast.print(ast).code;
       var outtxt = output;
       file.contents = new Buffer(outtxt);
     }

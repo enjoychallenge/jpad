@@ -3,9 +3,6 @@ var gutil = require('gulp-util');
 var PluginError = gutil.PluginError;
 var StringDecoder = require('string_decoder').StringDecoder;
 var ol3ds = require('./ol3ds.js');
-var acorn = require("acorn");
-var escodegen = require("escodegen");
-var estraverse = require("estraverse");
 var path = require("path");
 
 

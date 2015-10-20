@@ -1,12 +1,10 @@
 'use strict';
 var url = require('url');
 var ol3dsCfg = require('../../config.js');
-var acorn = require("acorn");
-var escodegen = require("escodegen");
-var estraverse = require("estraverse");
 var fs = require("fs-extra");
 var path = require("path");
 var glob = require('glob');
+var recast = require('recast');
 
 require('./../../bower_components/closure-library/closure/goog/bootstrap/nodejs');
 goog.require('goog.array');
@@ -42,10 +40,10 @@ var absolutizePathsInHtml = function($, htmlPath) {
  * @param {type} ast
  */
 var absolutizePathsInJs = function(ast, jsPath) {
-  estraverse.replace(ast, {
-    enter: function (node, parent) {
-      if(node.type==='Literal' &&
-          goog.isString(node.value) &&
+  recast.visit(ast, {
+    visitLiteral: function(path) {
+      var node = path.node;
+      if(goog.isString(node.value) &&
           goog.string.startsWith(node.value, './')) {
         var src = node.value;
         src = url.resolve('/'+jsPath, src);
@@ -54,6 +52,7 @@ var absolutizePathsInJs = function(ast, jsPath) {
         node.value = src;
         return node;
       }
+      this.traverse(path);
     }
   });
 };
