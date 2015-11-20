@@ -19,13 +19,16 @@ function jsPathAbsolutizer(options) {
     }
     if (file.isBuffer()) {
       var intxt = decoder.write(file.contents);
-      
-      var ast = recast.parse(intxt);
-
-      ol3ds.absolutizePathsInJs(ast, file.relative);
-      var output = recast.print(ast).code;
-      var outtxt = output;
-      file.contents = new Buffer(outtxt);
+      try {
+        var ast = recast.parse(intxt);
+        
+        ol3ds.absolutizePathsInJs(ast, file.relative);
+        var output = recast.print(ast).code;
+        var outtxt = output;
+        file.contents = new Buffer(outtxt);
+      } catch(e) {
+        return cb(null, file);
+      }
     }
     if (file.isStream()) {
       throw new PluginError(PLUGIN_NAME, 'Not yet supported!');
