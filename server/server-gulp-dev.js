@@ -33,14 +33,18 @@ app.use('/_compile', function(req, res, next) {
       path.dirname(localDestPath),
       path.basename(localDestPath, '.plovr.json')+'.js'
   );
-  if(fs.existsSync(localDestPath)) {
-    fs.createReadStream(localDestPath).pipe(res);
-    return;
-  }
   
   var basename = path.basename(localSrcPath, '.plovr.json');
   var plovrId = basename.replace(/\./g, '-');
-  var plovrUrl = 'http://localhost:9810/compile?id='+plovrId;
+  var plovrDomain = 'http://localhost:9810/';
+  var plovrUrl = plovrDomain+'compile?id='+plovrId;
+  var plovrSourcemap = plovrDomain+'sourcemap?id='+plovrId;
+  
+  if(fs.existsSync(localDestPath)) {
+    res.setHeader('x-sourcemap', plovrSourcemap);
+    fs.createReadStream(localDestPath).pipe(res);
+    return;
+  }
   
   fs.ensureDirSync(path.dirname(localDestPath));
   
@@ -54,9 +58,12 @@ app.use('/_compile', function(req, res, next) {
     });
   } else {
     var r = request(plovrUrl);
+    r.on('response', function(response) {
+      response.headers['x-sourcemap'] = plovrSourcemap;
+    });
     r.pipe(res);
     r.pipe(fs.createWriteStream(localDestPath));
-    return;
+      return;
   }
 });
 
