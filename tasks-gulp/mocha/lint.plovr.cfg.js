@@ -36,6 +36,14 @@ describe('plovr configuration', function() {
           assert.equal(inputs[0], correctInput);
         });
       }
+      var inherits = fjson['inherits'];
+      if(inherits) {
+        it('should not have "inherits" pointing to non-existing file "'+
+            inherits+'"', function () {
+          var inhpath = path.resolve(path.dirname(completeFpath), inherits);
+          assert(fs.existsSync(inhpath));
+        });
+      }
     });
   });
 });
