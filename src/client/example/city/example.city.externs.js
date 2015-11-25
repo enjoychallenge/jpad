@@ -1,13 +1,16 @@
 
+
 /**
  * @type {Object}
  */
 var examplex = {};
 
+
 /**
  * @type {Object}
  */
 examplex.city = {};
+
 
 /**
  * @typedef {{

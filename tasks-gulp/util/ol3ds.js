@@ -13,6 +13,67 @@ goog.require('goog.asserts');
 
 
 /**
+ * @param {string} filePath
+ * @return {Array.<string>} array of folder names on filePath
+ */
+var getDirNamesOfFile = function(filePath) {
+  var dirpath = path.dirname(filePath);
+  var dirnames = dirpath.split('/');
+  dirnames = goog.array.filter(dirnames, function(name) {
+    return name !== '.';
+  });
+  return dirnames;
+};
+
+/**
+ * @param {string} namespace namespace from Google Closure
+ * @return {Array.<string>} normalized namespace parts
+ * (lower case, removed trailing underscores)
+ */
+var getNamespaceParts = function(namespace) {
+  var parts = namespace.toLowerCase().split('.');
+  parts = goog.array.map(parts, function(part) {
+    return part.replace(/_$/, '');
+  });
+  return parts;
+};
+
+
+/**
+ * @param {string} filePath file path that leads to src/client
+ * @return {Array.<string>} normalized namespace parts derived from path
+ * and file name
+ */
+var getFileParts = function(filePath) {
+  var jspath = path.relative('src/client', filePath).replace(/\\/g, '/');
+  var dirparts = getDirNamesOfFile(jspath);
+  var extname = path.extname(jspath);
+  var fbasename = path.basename(jspath, extname);
+  var fnameparts = fbasename.split('.');
+  var firstSamePart = goog.array.find(dirparts, function(dp) {
+    var dpidx = fnameparts.indexOf(dp);
+    return dpidx === 0;
+  });
+  var result = [];
+  if(firstSamePart) {
+    var firstSamePartIdx = dirparts.indexOf(firstSamePart);
+    var expectedFNameParts =
+        dirparts.slice(firstSamePartIdx, dirparts.length);
+    var realParts = fnameparts.slice(0, expectedFNameParts.length);
+    if(goog.array.equals(expectedFNameParts, realParts)) {
+      goog.array.extend(result, dirparts.slice(0, firstSamePartIdx));
+    } else {
+      goog.array.extend(result, dirparts);
+    }
+  } else {
+    goog.array.extend(result, dirparts);
+  }
+  goog.array.extend(result, fnameparts);
+  return result;
+};
+
+
+/**
  * @param {type} $
  */
 var absolutizePathsInHtml = function($, htmlPath) {
@@ -202,5 +263,8 @@ plovr.srcToPrecompilePath = function(srcCfgPath) {
 module.exports = {
   absolutizePathsInHtml: absolutizePathsInHtml,
   absolutizePathsInJs: absolutizePathsInJs,
+  getDirNamesOfFile: getDirNamesOfFile,
+  getNamespaceParts: getNamespaceParts,
+  getFileParts: getFileParts,
   plovr: plovr
 };

@@ -1,4 +1,5 @@
 goog.provide('example.ol3.index');
+goog.provide('example.ol3.index');
 
 goog.require('ol.Map');
 goog.require('ol.View');

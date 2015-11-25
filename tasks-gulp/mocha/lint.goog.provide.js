@@ -3,33 +3,71 @@ var path = require("path");
 var TreeModel = require("tree-model");
 var assert = require("chai").assert;
 var fs = require("fs-extra");
+var ol3ds = require('./../util/ol3ds.js');
 
 require('./../../bower_components/closure-library/closure/goog/bootstrap/nodejs');
 goog.require('goog.array');
+goog.require('goog.math');
 
 describe('namespace', function() {
   var jspaths = glob.sync('src/client/**/*.js', {nodir: true});
   
-  var jsnames = goog.array.map(jspaths, function(jspath) {
-    return path.basename(jspath, '.js');
-  });
+  var jspartss = goog.array.map(jspaths, ol3ds.getFileParts);
   
-  var jsregexps = goog.array.map(jsnames, function(jsname) {
-    var re = new RegExp('^'+jsname.replace(/\./g, '\\.')+'(\\..+|$)');
+  var jsregexps = goog.array.map(jspartss, function(jsparts) {
+    var re = new RegExp('^'+jsparts.join('\\.')+'(\\..+|$)');
     return re;
   });
   
   var findCorrectFile = function(namespace) {
+    var parts = ol3ds.getNamespaceParts(namespace);
+    namespace = parts.join('.');
     var result = null;
     goog.array.forEach(jsregexps, function(jsregexp, idx) {
       if(namespace.match(jsregexp)) {
-        if(!result || result.split('.').length<jsnames[idx].split('.').length) {
+        if(!result || result.split('.').length<jspartss[idx].length) {
           result = jspaths[idx];
         }
       }
     });
     return result;
   };
+  
+  var dirTree = new TreeModel();
+  var dirRoot = dirTree.parse({name: 'client', path: ''});
+  var dirpaths = glob.sync('src/client/**/');
+  dirpaths.shift();
+  goog.array.forEach(dirpaths, function(dirpath) {
+    dirpath = dirpath.substring(0, dirpath.length-1);
+    dirpath = path.relative('src/client', dirpath).replace(/\\/g, '/');
+    var parts = dirpath.split('/');
+    var dirname = parts.pop();
+    var modelopts = {name: dirname, path: dirpath};
+    var dirnode = dirTree.parse(modelopts);
+    var parentPath = parts.join('/');
+    var parent = dirRoot.first(function(n) {
+      return n.model.path === parentPath;
+    });
+    parent.addChild(dirnode);
+  });
+
+  var findCorrectDir = function(namespace) {
+    var parts = ol3ds.getNamespaceParts(namespace);
+    var parentPath = parts.join('/');
+    var parent = dirRoot.first(function(n) {
+      return n.model.path === parentPath;
+    });
+    parts.pop();
+    while(!parent) {
+      parentPath = parts.join('/');
+      parent = dirRoot.first(function(n) {
+        return n.model.path === parentPath;
+      });
+      parts.pop();
+    }
+    return parent;
+  };
+
 
   goog.array.forEach(jspaths, function(completeFpath, fidx) {
     var fpath = path.relative('src/client', completeFpath).replace(/\\/g, '/');
@@ -59,10 +97,6 @@ describe('namespace', function() {
           tok4.type.label === 'string' &&
           tok5.type.label === ')') {
         var ns = tok4.value;
-        ns = ns.toLowerCase();
-        if(goog.string.endsWith(ns, '_')) {
-          ns = ns.substr(0, ns.length-1);
-        }
         namespaces.push(ns);
       }
     });
@@ -72,13 +106,36 @@ describe('namespace', function() {
 
     goog.array.forEach(namespaces, function(namespace) {
       describe(namespace, function() {
-        var correctFile = findCorrectFile(namespace);
+        var nsParts = ol3ds.getNamespaceParts(namespace);
+        var correctDirNode = findCorrectDir(namespace);
+        var correctDir = correctDirNode.model.path;
+        
+        var completeCorrectDir = 'src/client/'+correctDir;
+        
+        it('should be provided by file located in appropriate dir, e.g. ' +
+            completeCorrectDir, function () {
+          var dirname = path.dirname(completeFpath);
+          assert.equal(dirname, completeCorrectDir);
+        });
+        
+        it('should not contain two parts with same name',
+            function () {
+          var originalLength = nsParts.length;
+          goog.array.removeDuplicates(nsParts);
+          assert.equal(nsParts.length, originalLength);
+        });
 
-        it('should be provided in file with suitable name', function () {
-          var cfsuggestion = correctFile || 'src/client/'+namespace+'.js';
-          assert(correctFile && correctFile === completeFpath,
-              'should be either located in another file (e.g. '+cfsuggestion+
-              ') or renamed starting with '+jsnames[fidx]);
+        var correctFile = findCorrectFile(namespace);
+        var cfsuggestion = correctFile;
+        if(!cfsuggestion) {
+          var fnidx = correctDir.length ? correctDir.split('/').length : 0;
+          fnidx = goog.math.clamp(fnidx, 0, nsParts.length-1);
+          cfsuggestion = path.join(completeCorrectDir, nsParts[fnidx]+'.js');
+          cfsuggestion = cfsuggestion.replace(/\\/g, '/');
+        }
+        it('should be located in another file, e.g. '+cfsuggestion,
+            function () {
+          assert.equal(completeFpath, cfsuggestion);
         });
       });
     });
