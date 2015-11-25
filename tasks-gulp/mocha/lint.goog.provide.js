@@ -12,7 +12,9 @@ goog.require('goog.math');
 describe('namespace', function() {
   var jspaths = glob.sync('src/client/**/*.js', {nodir: true});
   
-  var jspartss = goog.array.map(jspaths, ol3ds.getFileParts);
+  var jspartss = goog.array.map(jspaths, function(jspath) {
+    return ol3ds.getFileParts(jspath);
+  });
   
   var jsregexps = goog.array.map(jspartss, function(jsparts) {
     var re = new RegExp('^'+jsparts.join('\\.')+'(\\..+|$)');

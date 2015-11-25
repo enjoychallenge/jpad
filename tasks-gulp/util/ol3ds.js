@@ -41,13 +41,14 @@ var getNamespaceParts = function(namespace) {
 
 /**
  * @param {string} filePath file path that leads to src/client
+ * @param {string=} opt_extension file path extension
  * @return {Array.<string>} normalized namespace parts derived from path
  * and file name
  */
-var getFileParts = function(filePath) {
+var getFileParts = function(filePath, opt_extension) {
   var jspath = path.relative('src/client', filePath).replace(/\\/g, '/');
   var dirparts = getDirNamesOfFile(jspath);
-  var extname = path.extname(jspath);
+  var extname = opt_extension || path.extname(jspath);
   var fbasename = path.basename(jspath, extname);
   var fnameparts = fbasename.split('.');
   var firstSamePart = goog.array.find(dirparts, function(dp) {

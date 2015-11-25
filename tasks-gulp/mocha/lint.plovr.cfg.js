@@ -3,6 +3,7 @@ var path = require("path");
 var TreeModel = require("tree-model");
 var assert = require("chai").assert;
 var fs = require("fs-extra");
+var ol3ds = require('./../util/ol3ds.js');
 
 require('./../../bower_components/closure-library/closure/goog/bootstrap/nodejs');
 goog.require('goog.array');
@@ -16,23 +17,21 @@ describe('plovr configuration', function() {
   
   goog.array.forEach(fnames, function(fname, fidx) {
     var completeFpath = fpaths[fidx];
+    var parts = ol3ds.getFileParts(completeFpath, '.plovr.json');
     
     describe(completeFpath, function() {
       var fcontent = fs.readFileSync(completeFpath);
       var fjson = JSON.parse(fcontent);
     
-      it('should have "id" suitable for file name', function () {
-        var correctId =  fname.replace(/\./g, '-');
-        var plovrId = fjson.id;
-        var correctfname =  plovrId.replace(/-/g, '.')+'.plovr.json';
-        assert.equal(correctId, plovrId,
-            'should be either located in another file (' +correctfname+
-            ') or should have "id" set to "'+correctId+'"');
+      var correctId =  parts.join('-');
+      var plovrId = fjson.id;
+      it('should have "id" set to "'+correctId+'"', function () {
+        assert.equal(correctId, plovrId);
       });
       var inputs = fjson['inputs'];
       if(inputs) {
-        it('should have one "inputs" suitable for file name', function () {
-          var correctInput = fname + '.js';
+        var correctInput = fname + '.js';
+        it('should have one "inputs" set to "'+correctInput+'"', function () {
           assert.equal(inputs.length, 1);
           assert.equal(inputs[0], correctInput);
         });
