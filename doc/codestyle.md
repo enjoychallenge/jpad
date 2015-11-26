@@ -15,30 +15,25 @@
 * Files are named in two ways: 
  1. No file name part equals to any directory name of the file path inside `src/client`
     * This is right: `src/client/path/to/file.js`
-    * This is right: `src/client/path/to/file.with.almost.any.name.js`
-    * This is right: `src/client/path/to/client.part.is.possible.js`
+    * This is right: `src/client/path/to/file.and.something.else.js`
     * This is wrong: ~~`src/client/path/to/duplicatepart/file.duplicatepart.js`~~
  2. File name starts with parts that overlap with directory names at the end of of the file path inside `src/client`
     * This is right: `src/client/path/to/file/file.js`
-    * This is right: `src/client/path/to/file/file.almost.anything.js`
-    * This is right: `src/client/path/to/file/to.file.js`
-    * This is right: `src/client/path/to/file/path.to.file.almost.anything.js`
-    * This is wrong: ~~`src/client/path/to/file/path.js`~~
+    * This is right: `src/client/path/to/file/file.and.something.else.js`
+    * This is right: `src/client/path/to/file/path.to.file.and.something.else.js`
+    * This is wrong: ~~`src/client/path/to/file/path.to.js`~~
     * This is wrong: ~~`src/client/path/to/file/to.js`~~
-    * This is wrong: ~~`src/client/path/to/file/file.to.js`~~
-    * This is wrong: ~~`src/client/path/to/file/client.path.to.file.js`~~
+    * This is wrong: ~~`src/client/path/to/file/file.to.path.js`~~
 
 Note that file path parts (directories) and file name parts form one **sequence**. This sequence is closely related to JS namespaces inside these files (see bellow).
 
 File path and name | Formed sequence
 --- | ---
 `src/client/path/to/file.js` | `path.to.file`
-`src/client/path/to/file.with.almost.any.name.js` | `path.to.file.with.almost.any.name`
-`src/client/path/to/client.part.is.possible.js` | `path.to.client.part.is.possible`
+`src/client/path/to/file.and.something.else.js` | `path.to.file.and.something.else`
 `src/client/path/to/file/file.js` | `path.to.file`
-`src/client/path/to/file/file.almost.anything.js` | `path.to.file.almost.anything`
-`src/client/path/to/file/to.file.js` | `path.to.file`
-`src/client/path/to/file/path.to.file.almost.anything.js` | `path.to.file.almost.anything.js`
+`src/client/path/to/file/file.and.something.else.js` | `path.to.file.and.something.else`
+`src/client/path/to/file/path.to.file.and.something.else.js` | `path.to.file.and.something.else.js`
 
 ### JS files
 * Every `*.js` inside `src/client` directory is ready for compilation using Closure Compiler's advanced mode. Exceptions:
@@ -48,8 +43,7 @@ File path and name | Formed sequence
     * `path.to.file`
     * `path.to.File`
     * `path.to.FILE_`
-    * `path.to.file.and.almost.anything.else`
-    * `path.TO_.file_.plus`
+    * `path.to.file.and.something.else`
     * etc.
 * String literals starting with `./` are treated as **dir-relative or file-relative paths** that will be automatically transformed to domain-relative paths by ol3ds (because of HTML5 replaceState / pushState). **Always use one string literal starting with containing complete path and filename!**
   * This is right: `var imgPath = './my.first.app.logo.png';`
