@@ -51,11 +51,10 @@ File path and name | Formed sequence
     * `path.to.file.and.almost.anything.else`
     * `path.TO_.file_.plus`
     * etc.
-* String literals starting with `./` are treated as **dir-relative or file-relative paths** that will be automatically transformed to domain-relative paths (because of HTML5 replaceState / pushState). **Always use one string literal starting with containing complete path and filename!**
+* String literals starting with `./` are treated as **dir-relative or file-relative paths** that will be automatically transformed to domain-relative paths by ol3ds (because of HTML5 replaceState / pushState). **Always use one string literal starting with containing complete path and filename!**
   * This is right: `var imgPath = './my.first.app.logo.png';`
   * This is wrong: ~~`var imgPath = 'my.first.app.logo.png';`~~
   * This is wrong: ~~`var imgPath = './my.first.app.logo' + '.png';`~~
-  * Thanks to this, ol3ds can simply replace all relative paths with absolute, which is necessary for HTML5 pushState.
 
 ### Plovr
 * Every `*.plovr.json` is configuration file for Plovr
