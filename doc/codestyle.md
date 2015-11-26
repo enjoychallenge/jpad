@@ -45,7 +45,7 @@ File path and name | Formed sequence
     * `path.to.FILE_`
     * `path.to.file.and.something.else`
     * etc.
-* String literals starting with `./` are treated as **dir-relative or file-relative paths** that will be automatically transformed to domain-relative paths by ol3ds (because of HTML5 replaceState / pushState). **Always use one string literal starting with containing complete path and filename!**
+* String literals starting with `./` are treated as **dir-relative or file-relative paths** that will be automatically transformed to domain-relative paths by ol3ds (because of HTML5 replaceState / pushState). **Always use one string literal containing complete path and filename!**
   * This is right: `var imgPath = './my.first.app.logo.png';`
   * This is wrong: ~~`var imgPath = 'my.first.app.logo.png';`~~
   * This is wrong: ~~`var imgPath = './my.first.app.logo' + '.png';`~~
