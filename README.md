@@ -34,12 +34,12 @@ sudo grunt install (Linux) / grunt install (Windows)
 Windows users: If you have some errors during `npm install` related to [node-gyp](https://github.com/TooTallNate/node-gyp), you will probably need to install [Microsoft Visual Studio C++ 2012 Express for Windows Desktop](http://www.microsoft.com/en-us/download/details.aspx?id=34673) and run the installation again.
 
 ## Development
-* `grunt` to run dev server and open Hello World in the browser
-  * Edit content of `src/client/example/ol3/example.ol3.index.js` and see changes in the browser
-* `grunt lint` to run gjslint
-* `grunt fix` to run fixjsstyle
+* `gulp` to run dev server and open app in the browser
+  * Edit files in `src/client` and see changes in the browser
+* `gulp -h` to get more commands
 
 ## Build
-* `grunt build` to compile the code and copy files to `build/`
-* `grunt build --map` to include also [source maps](https://developer.chrome.com/devtools/docs/javascript-debugging#source-maps)
+* `gulp build` to compile the code and copy files to `build/`
+* `gulp build -s` to include also [source maps](https://developer.chrome.com/devtools/docs/javascript-debugging#source-maps)
+* `gulp -h` to get more commands
 
