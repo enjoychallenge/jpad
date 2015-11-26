@@ -1,4 +1,4 @@
-# Rules of code structure
+# Rules for ol3ds code style
 
 ## Source files for client side
 * Source files for client are located in `src/client`
