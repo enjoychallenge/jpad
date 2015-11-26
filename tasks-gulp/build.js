@@ -60,6 +60,7 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
       var htmlout = $.html();
       var outPath = path.resolve('./build/client',
           path.relative('src/client', htmlPath));
+      fs.ensureDirSync(path.dirname(outPath));
       fs.writeFileSync(outPath, htmlout, {encoding: 'utf-8'});
     });
     
