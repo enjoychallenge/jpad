@@ -184,6 +184,16 @@ plovr.getCompilerMode = function(plovrJsonPath) {
 };
 
 /**
+ * @param {string} plovrJsonPath
+ * @return {string}
+ */
+plovr.getId = function(plovrJsonPath) {
+  var fcontent = fs.readFileSync(plovrJsonPath);
+  var json = JSON.parse(fcontent);
+  return json['id'];
+};
+
+/**
  * @param {string} srcCfgPath
  */
 plovr.getDependentConfigs = function(srcCfgPath) {

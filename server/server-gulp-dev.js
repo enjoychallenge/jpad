@@ -34,8 +34,7 @@ app.use('/_compile', function(req, res, next) {
       path.basename(localDestPath, '.plovr.json')+'.js'
   );
   
-  var basename = path.basename(localSrcPath, '.plovr.json');
-  var plovrId = basename.replace(/\./g, '-');
+  var plovrId = ol3ds.plovr.getId(localSrcPath);
   var plovrDomain = 'http://localhost:9810/';
   var plovrUrl = plovrDomain+'compile?id='+plovrId;
   var plovrSourcemap = plovrDomain+'sourcemap?id='+plovrId;
