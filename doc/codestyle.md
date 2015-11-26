@@ -30,8 +30,8 @@ Note that file path parts (directories) and file name parts form one **sequence*
 File path and name | Formed sequence
 --- | ---
 `src/client/path/to/file.js` | `path.to.file`
-`src/client/path/to/file.and.something.else.js` | `path.to.file.and.something.else`
 `src/client/path/to/file/file.js` | `path.to.file`
+`src/client/path/to/file.and.something.else.js` | `path.to.file.and.something.else`
 `src/client/path/to/file/file.and.something.else.js` | `path.to.file.and.something.else`
 `src/client/path/to/file/path.to.file.and.something.else.js` | `path.to.file.and.something.else.js`
 
