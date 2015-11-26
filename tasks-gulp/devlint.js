@@ -36,6 +36,6 @@ module.exports = function (gulp, plugins) {
   });
 
 
-  gulp.task('dev-lint', ['watch:fixjsstyle']);
+  gulp.task('devlint', ['watch:fixjsstyle']);
 };
 

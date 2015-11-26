@@ -6,8 +6,14 @@ var ol3dsCfg = require('./config.js');
 
 var argv = require('yargs')
     .usage('Usage: gulp <command> [options]')
-    .command('dev', 'Run dev server and open app.')
     .command('build', 'Compile and refactor files for publishing.')
+    .command('dev', 'Run dev server and open app.')
+    .command('devlint', 'Run watcher for linting and fixing ' +
+        'source code style in Closure way immediately during editing.')
+    .command('fix', 'Fix source code style in Closure way.')
+    .command('fixlint', 'Fix and lint source code style ' +
+        'in Closure and ol3ds way.')
+    .command('lint', 'Lint source code style in Closure and ol3ds way.')
     .option('s', {
         type: 'boolean',
         alias: 'sourcemap',
@@ -25,7 +31,7 @@ function loadTask(task) {
 }
 loadTask('build');
 loadTask('dev');
-loadTask('dev-lint');
+loadTask('devlint');
 loadTask('fix');
 loadTask('lint');
 
