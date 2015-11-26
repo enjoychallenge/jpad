@@ -44,7 +44,7 @@ File path and name | Formed sequence
 * Every `*.js` inside `src/client` directory is ready for compilation using Closure Compiler's advanced mode. Exceptions:
   * `*.externs.js` is excluded from compilation, it might be treated as [externs files](https://developers.google.com/closure/compiler/docs/api-tutorial3).
 * Namespace provided by `goog.provide` corresponds to the sequence formed by file path and file name (see above). If you convert namespace to lower case and remove trailing underscores, the character string is equal to or starts with the sequence.
- * Example: File `src/client/path/to/file.js` forms `path.to.file` sequence and it may contain following namespaces:
+ * File `src/client/path/to/file.js` forms `path.to.file` sequence, so it may contain following namespaces:
     * `path.to.file`
     * `path.to.File`
     * `path.to.FILE_`
@@ -61,7 +61,7 @@ File path and name | Formed sequence
 * Every `*.plovr.json` is configuration file for Plovr
 * Every HTML file may refer to one Plovr config with the same name.
 * Reference to Plovr config is done by Plovr config file name, not by `http://plovrserver/compile?id=...`
-  * Example: Inside `example.ol3.index.html` you can find `<script src="example.ol3.index.plovr.json" type="text/javascript"></script>`
+  * Inside `example.ol3.index.html` you can find `<script src="example.ol3.index.plovr.json" type="text/javascript"></script>`
 * If there is a file `*.dev.plovr.json`, it is a plovr configuration used for dev process.
   * Do not use link to `*.dev.plovr.json` inside HTML. Use link to main `*.plovr.json` and ol3ds will make the replacement automatically.
 * Extern files (`*.externs.js`) are not precompiled, but it must be specified as externs inside `*.plovr.json`.
