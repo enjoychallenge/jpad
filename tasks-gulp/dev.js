@@ -57,7 +57,7 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
   });
 
   gulp.task('dev:open', ['dev:serve'], function(){
-    var url = 'http://localhost:'+ol3dsCfg.port + ol3dsCfg.appPath;
+    var url = 'http://localhost:'+ol3dsCfg.modulesOffPort + ol3dsCfg.appPath;
     gulp.src(__filename)
         .pipe(plugins.open({
           uri: url

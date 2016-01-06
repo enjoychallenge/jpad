@@ -4,7 +4,10 @@ var ol3ds = {
   appPath: '/path/to/application/',
   plovrPattern: 'src/client/**/*.plovr.json',
   plovrHtmlPattern: 'src/client/**/*.html',
-  port: 9000,
+  modulesOffPort: 9000,
+  modulesOnPort: 9001,
+  modulesOffFolder: 'modon',
+  modulesOnFolder: 'modoff',
   libMappings: [
     {
       src: 'bower_components/ol3/css/',

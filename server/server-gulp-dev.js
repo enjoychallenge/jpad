@@ -15,7 +15,7 @@ var gulp = require('gulp');
 var gulpPlugins = require('gulp-load-plugins')();
 
 var appPath = ol3dsCfg.appPath;
-var port = ol3dsCfg.port;
+var port = ol3dsCfg.modulesOffPort;
 
 require('./../tasks-gulp/dev')(gulp, gulpPlugins, ol3dsCfg);
 
