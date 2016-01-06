@@ -55,7 +55,7 @@
 
 
   "externs": [
-    "../city/example.city.externs.js",
+    "../city/city.externs.js",
     "../../../../bower_components/ol3/externs/olx.js",
     "../../../../bower_components/ol3/externs/bingmaps.js",
     "../../../../bower_components/ol3/externs/closure-compiler.js",
@@ -67,7 +67,7 @@
   ],
 
   "inputs": [
-    "example.extern.index.js"
+    "index.js"
   ],
 
   "level": "VERBOSE",

@@ -3,7 +3,7 @@
 
   "debug": true,
 
-  "inherits": "example.extern.index.plovr.json",
+  "inherits": "index.plovr.json",
   "define": {
     "goog.DEBUG": true,
     "goog.LOCALE": "cs",

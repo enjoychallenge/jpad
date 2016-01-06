@@ -84,14 +84,7 @@ app.use(appPath, function(req, res, next) {
       res.redirect(appPath+reqPath+'/');
       return;
     }
-    if(reqPath === '') {
-      var htmlName = 'index.html';
-      var htmlPath = htmlName;
-    } else {
-      htmlName = reqPath.replace(/^\/|\/$/g, '').replace(/\//g, '.');
-      htmlName += '.index.html';
-      htmlPath = reqPath+'/'+htmlName;
-    }
+    var htmlName = 'index.html';
     var localHtmlPath = path.join(localReqPath, htmlName);
   }
   if(goog.string.endsWith(reqPath, '.html')) {
