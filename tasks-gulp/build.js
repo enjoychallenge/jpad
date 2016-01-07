@@ -188,7 +188,7 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
 
   gulp.task('build:open', ['build:serve'],
       function(){
-        var url = 'http://localhost:'+ol3dsCfg.modulesOffPort +
+        var url = 'http://localhost:'+ol3dsCfg.port +
             ol3dsCfg.appPath;
         gulp.src(__filename)
             .pipe(plugins.open({

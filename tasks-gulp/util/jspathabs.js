@@ -22,7 +22,8 @@ function jsPathAbsolutizer(options) {
       try {
         var ast = recast.parse(intxt);
         
-        ol3ds.absolutizePathsInJs(ast, file.relative);
+        ol3ds.absolutizePathsInJs(ast, file.relative,
+          options.includeModulesOnFolder);
         var output = recast.print(ast).code;
         var outtxt = output;
         file.contents = new Buffer(outtxt);

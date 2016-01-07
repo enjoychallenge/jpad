@@ -25,7 +25,8 @@ function htmlPathAbsolutizer(options) {
     if (file.isBuffer()) {
       var intxt = decoder.write(file.contents);
       var $ = cheerio.load(intxt);
-      ol3ds.absolutizePathsInHtml($, file.relative);
+      ol3ds.absolutizePathsInHtml($, file.relative,
+          options.includeModulesOnFolder);
       var outtxt = $.html();
       file.contents = new Buffer(outtxt);
     }

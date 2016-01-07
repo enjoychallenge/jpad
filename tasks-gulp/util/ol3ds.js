@@ -77,13 +77,16 @@ var getFileParts = function(filePath, opt_extension) {
 /**
  * @param {type} $
  */
-var absolutizePathsInHtml = function($, htmlPath) {
+var absolutizePathsInHtml = function($, htmlPath, includeModulesOnFolder) {
   $('[href]').each(function(i, elem) {
       var href = $(this).attr('href');
       if(!(goog.string.startsWith(href, '/') ||
           goog.string.contains(href, '//'))) {
         href = url.resolve('/'+htmlPath, href);
         href = ol3dsCfg.appPath + href.substr(1);
+        if(includeModulesOnFolder) {
+          href = '/'+ol3dsCfg.modulesOnFolder + href;
+        }
         $(this).attr('href', href);
       }
   });
@@ -93,6 +96,9 @@ var absolutizePathsInHtml = function($, htmlPath) {
           goog.string.contains(src, '//'))) {
         src = url.resolve('/'+htmlPath, src);
         src = ol3dsCfg.appPath + src.substr(1);
+        if(includeModulesOnFolder) {
+          src = '/'+ol3dsCfg.modulesOnFolder + src;
+        }
         $(this).attr('src', src);
       }
   });
@@ -101,7 +107,7 @@ var absolutizePathsInHtml = function($, htmlPath) {
 /**
  * @param {type} ast
  */
-var absolutizePathsInJs = function(ast, jsPath) {
+var absolutizePathsInJs = function(ast, jsPath, includeModulesOnFolder) {
   recast.visit(ast, {
     visitLiteral: function(path) {
       var node = path.node;
@@ -110,6 +116,9 @@ var absolutizePathsInJs = function(ast, jsPath) {
         var src = node.value;
         src = url.resolve('/'+jsPath, src);
         src = ol3dsCfg.appPath + src.substr(1);
+        if(includeModulesOnFolder) {
+          src = '/'+ol3dsCfg.modulesOnFolder + src;
+        }
         //console.log('src', src);
         node.value = src;
         return node;
@@ -124,7 +133,7 @@ var plovr = {};
 /**
  * @param {type} ast
  */
-plovr.updatePaths = function(json, plovrSrcPath, plovrDestPath) {
+plovr.updatePaths = function(json, plovrSrcPath, plovrDestPath, modulesOn) {
   var srcDir = path.dirname(plovrSrcPath);
   var destDir = path.dirname(plovrDestPath);
   var srcClientDir = path.resolve('./src/client');
@@ -143,12 +152,14 @@ plovr.updatePaths = function(json, plovrSrcPath, plovrDestPath) {
       return replacePath(p);
     })
   }
+  var modFolder = modulesOn ? ol3dsCfg.modulesOnFolder :
+          ol3dsCfg.modulesOffFolder;
   if(json["paths"]) {
     json["paths"] = goog.array.map(json["paths"], function(p) {
       p = path.normalize(path.resolve(srcDir, p));
       var rp = path.normalize(path.relative(srcClientDir, p));
       if(rp.indexOf('..')!==0 && p.indexOf(srcClientDir)===0) {
-        p = path.join('./temp/precompile/client', rp);
+        p = path.join('./temp/'+modFolder+'/precompile/client', rp);
         p = path.resolve(p);
         p = path.relative(destDir, p).replace(/\\/g, '/');
         if(rp === '.') {
@@ -256,7 +267,7 @@ plovr.getMainConfigs = function() {
   return glob.sync(ol3dsCfg.plovrPattern, {
     ignore: [
       'src/client/**/*.dev.plovr.json',
-      'src/client/**/*.modon.plovr.json'
+      'src/client/**/*.'+ol3dsCfg.modulesOnFolder+'.plovr.json'
     ]
   });
 };
@@ -266,8 +277,12 @@ plovr.getHtmls = function() {
 };
 
 plovr.srcToPrecompilePath = function(srcCfgPath) {
+  var modulesOn = path.basename(srcCfgPath)
+      .indexOf('.'+ol3dsCfg.modulesOnFolder+'.') > -1;
   var src = path.relative('./src', srcCfgPath);
-  var result = path.join('./temp/precompile', src);
+  var modFolder = modulesOn ? ol3dsCfg.modulesOnFolder :
+          ol3dsCfg.modulesOffFolder;
+  var result = path.join('./temp/'+modFolder+'/precompile', src);
   return result;
 };
 

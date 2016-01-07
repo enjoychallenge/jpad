@@ -4,6 +4,7 @@ var PluginError = gutil.PluginError;
 var StringDecoder = require('string_decoder').StringDecoder;
 var ol3ds = require('./ol3ds.js');
 var path = require("path");
+var ol3dsCfg = require('../../config.js');
 
 
 
@@ -11,7 +12,7 @@ var PLUGIN_NAME = 'gulp-js-path-abs';
 
 function plovrPathUpdater(options) {
   var decoder = new StringDecoder('utf8');
-
+  
   // Creating a stream through which each file will pass
   return through.obj(function(file, enc, cb) {
     if (file.isNull()) {
@@ -24,11 +25,13 @@ function plovrPathUpdater(options) {
       
       var srcPath = file.path;
       var destPath = path.relative('./src/client', srcPath);
-      destPath = path.join('./temp/precompile/client', destPath);
+      var modFolder = options.modulesOn ? ol3dsCfg.modulesOnFolder : 
+          ol3dsCfg.modulesOffFolder;
+      destPath = path.join('./temp/'+modFolder+'/precompile/client', destPath);
       destPath = path.resolve('.', destPath);
       //console.log(destPath);
 
-      ol3ds.plovr.updatePaths(json, srcPath, destPath);
+      ol3ds.plovr.updatePaths(json, srcPath, destPath, options.modulesOn);
       var output = JSON.stringify(json, null, '  ');
       var outtxt = output;
       file.contents = new Buffer(outtxt);

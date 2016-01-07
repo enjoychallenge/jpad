@@ -57,37 +57,90 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
   });
 
   gulp.task('dev:open', ['dev:serve'], function(){
-    var url = 'http://localhost:'+ol3dsCfg.modulesOffPort + ol3dsCfg.appPath;
+    var url = 'http://localhost:'+ol3dsCfg.port + ol3dsCfg.appPath;
     gulp.src(__filename)
         .pipe(plugins.open({
           uri: url
         }));
   });
-
-  gulp.task('htmlpathabs', function() {
+  
+  gulp.task('htmlpathabsmodoff', function() {
     var src = './src/client/**/*.html';
-    var dest = './temp/precompile/client';
+    var modFolder = ol3dsCfg.modulesOffFolder;
+    var dest = './temp/'+modFolder+'/precompile/client';
     return gulp.src(src)
         .pipe(plugins.newer(dest))
-        .pipe(htmlpathabs())
+        .pipe(htmlpathabs({includeModulesOnFolder: false}))
         .pipe(gulp.dest(dest));
   });
   
-  gulp.task('precompile:js', function() {
-    var src = ['src/client/**/*.js', '!src/client/**/*.externs.js'];
-    var dest = 'temp/precompile/client';
+  gulp.task('htmlpathabsmodon', function() {
+    var src = './src/client/**/*.html';
+    var modFolder = ol3dsCfg.modulesOnFolder;
+    var dest = './temp/'+modFolder+'/precompile/client';
     return gulp.src(src)
         .pipe(plugins.newer(dest))
-        .pipe(jspathabs())
+        .pipe(htmlpathabs({includeModulesOnFolder: true}))
+        .pipe(gulp.dest(dest));
+  });
+  
+  gulp.task('precompile:js', ['precompile:js:modoff', 'precompile:js:modon']);
+
+  gulp.task('precompile:js:modoff', function() {
+    var src = [
+      'src/client/**/*.js',
+      '!src/client/**/*.externs.js',
+      '!src/client/**/*.modon.js'
+    ];
+    var modFolder = ol3dsCfg.modulesOffFolder;
+    var dest = './temp/'+modFolder+'/precompile/client';
+    return gulp.src(src)
+        .pipe(plugins.newer(dest))
+        .pipe(jspathabs({includeModulesOnFolder: false}))
         .pipe(gulp.dest(dest));
   });
 
-  gulp.task('precompile:plovr', function() {
-    var src = './src/client/**/*.plovr.json';
-    var dest = './temp/precompile/client';
+  gulp.task('precompile:js:modon', function() {
+    var src = [
+      'src/client/**/*.js',
+      '!src/client/**/*.externs.js',
+      '!src/client/**/*.modoff.js'
+    ];
+    var modFolder = ol3dsCfg.modulesOnFolder;
+    var dest = './temp/'+modFolder+'/precompile/client';
     return gulp.src(src)
         .pipe(plugins.newer(dest))
-        .pipe(plovrpathupd())
+        .pipe(jspathabs({includeModulesOnFolder: true}))
+        .pipe(gulp.dest(dest));
+  });
+
+  gulp.task('precompile:plovr', [
+    'precompile:plovr:modoff',
+    'precompile:plovr:modon'
+  ]);
+  
+  gulp.task('precompile:plovr:modoff', function() {
+    var src = [
+      'src/client/**/*.plovr.json',
+      '!src/client/**/*.modon.plovr.json',
+      '!src/client/**/*.modon.dev.plovr.json'
+    ];
+    var modFolder = ol3dsCfg.modulesOffFolder;
+    var dest = './temp/'+modFolder+'/precompile/client';
+    return gulp.src(src)
+        .pipe(plugins.newer(dest))
+        .pipe(plovrpathupd({modulesOn: false}))
+        .pipe(gulp.dest(dest));
+  });
+  gulp.task('precompile:plovr:modon', function() {
+    var src = [
+      'src/client/**/*.plovr.json'
+    ];
+    var modFolder = ol3dsCfg.modulesOnFolder;
+    var dest = './temp/'+modFolder+'/precompile/client';
+    return gulp.src(src)
+        .pipe(plugins.newer(dest))
+        .pipe(plovrpathupd({modulesOn: true}))
         .pipe(gulp.dest(dest));
   });
   
@@ -99,7 +152,8 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
   });
 
   gulp.task('compile:delete-js', function(cb) {
-    var jss = glob.sync('./temp/compile/**/*.js');
+    var modFolders = [ol3dsCfg.modulesOnFolder, ol3dsCfg.modulesOffFolder];
+    var jss = glob.sync('./temp/@('+modFolders.join('|')+')/compile/**/*.js');
     goog.array.forEach(jss, function(js) {
       fs.unlinkSync(js);
     });
@@ -108,12 +162,16 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
 
   gulp.task('dev:watch:plovr', ['dev:serve:plovr'], function() {
     var src = './src/client/**/*.plovr.json';
-    var dest = './temp/precompile/client';
     
     return plugins.watch(src)
       .pipe(vinylPaths(function(plovrCfgs) {
         plovrCfgs = goog.isArray(plovrCfgs) ? plovrCfgs : [plovrCfgs];
         goog.array.forEach(plovrCfgs, function(plovrCfg) {
+          var modulesOn = path.basename(plovrCfg)
+              .indexOf('.'+ol3dsCfg.modulesOnFolder+'.') > -1;
+          var modFolder = modulesOn ? ol3dsCfg.modulesOnFolder :
+                  ol3dsCfg.modulesOffFolder;
+          var dest = './temp/'+modFolder+'/precompile/client';
           var srcp = path.relative('./src/client', plovrCfg);
           var destp = path.join(dest, srcp);
           if(!fs.existsSync(srcp)) {
@@ -125,8 +183,12 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
           affectedCfgs.push(path.normalize(path.resolve('.', plovrCfg)));
           
           goog.array.forEach(affectedCfgs, function(affCfg) {
+            modulesOn = path.basename(affCfg)
+                .indexOf('.'+ol3dsCfg.modulesOnFolder+'.') > -1;
+            modFolder = modulesOn ? ol3dsCfg.modulesOnFolder :
+                    ol3dsCfg.modulesOffFolder;
             var relCfg = path.relative('./src/', affCfg);
-            var affScript = path.join('./temp/compile', relCfg);
+            var affScript = path.join('./temp/'+modFolder+'/compile', relCfg);
             affScript = path.join(path.dirname(affScript),
                 path.basename(affScript, '.plovr.json')+'.js');
             if(fs.existsSync(affScript)) {
