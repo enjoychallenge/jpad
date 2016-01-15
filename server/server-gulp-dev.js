@@ -25,52 +25,60 @@ app.use('/_compile', function(req, res, next) {
       .indexOf('.'+ol3dsCfg.modulesOnFolder+'.') > -1;
   var modFolder = modulesOn ? ol3dsCfg.modulesOnFolder :
           ol3dsCfg.modulesOffFolder;
+  
+  var plovrDomain = 'http://localhost:9810';
+  
+  var isModule = !goog.string.endsWith(req.path, '.json');
+  if(!isModule) {
+    var localSrcPath =
+        __dirname+'/../temp/'+modFolder+'/precompile/client'+req.path;
+    localSrcPath = path.normalize(localSrcPath);
+    if(!fs.existsSync(localSrcPath)) {
+      next();
+      return;
+    }
+    var localDestPath =
+        __dirname+'/../temp/'+modFolder+'/compile/client'+req.path;
+    localDestPath = path.normalize(localDestPath);
+    localDestPath = path.join(
+        path.dirname(localDestPath),
+        path.basename(localDestPath, '.plovr.json')+'.js'
+    );
 
-  
-  var localSrcPath =
-      __dirname+'/../temp/'+modFolder+'/precompile/client'+req.path;
-  localSrcPath = path.normalize(localSrcPath);
-  if(!fs.existsSync(localSrcPath)) {
-    next();
-    return;
-  }
-  var localDestPath =
-      __dirname+'/../temp/'+modFolder+'/compile/client'+req.path;
-  localDestPath = path.normalize(localDestPath);
-  localDestPath = path.join(
-      path.dirname(localDestPath),
-      path.basename(localDestPath, '.plovr.json')+'.js'
-  );
-  
-  var plovrId = ol3ds.plovr.getId(localSrcPath);
-  var plovrDomain = 'http://localhost:9810/';
-  var plovrUrl = plovrDomain+'compile?id='+plovrId;
-  var plovrSourcemap = plovrDomain+'sourcemap?id='+plovrId;
-  
-  if(fs.existsSync(localDestPath)) {
-    res.setHeader('x-sourcemap', plovrSourcemap);
-    fs.createReadStream(localDestPath).pipe(res);
-    return;
-  }
-  
-  fs.ensureDirSync(path.dirname(localDestPath));
-  
-  var plovrMode = ol3ds.plovr.getCompilerMode(localSrcPath);
-  if(plovrMode==='RAW') {
-    var r = request(plovrUrl, function (error, response, body) {
-      body = body.replace("var path = '/compile';", "var path = '/_compile';");
-      res.send(body);
-      fs.writeFileSync(localDestPath, body, {encoding: 'utf-8'});
+    var plovrId = ol3ds.plovr.getId(localSrcPath);
+    var plovrUrl = plovrDomain+'/compile?id='+plovrId;
+    var plovrSourcemap = plovrDomain+'/sourcemap?id='+plovrId;
+
+    if(fs.existsSync(localDestPath)) {
+      res.setHeader('x-sourcemap', plovrSourcemap);
+      fs.createReadStream(localDestPath).pipe(res);
       return;
-    });
+    }
+
+    fs.ensureDirSync(path.dirname(localDestPath));
+
+    var plovrMode = ol3ds.plovr.getCompilerMode(localSrcPath);
+    if(plovrMode==='RAW') {
+      var r = request(plovrUrl, function (error, response, body) {
+        body = body.replace("var path = '/compile';", "var path = '/_compile';");
+        res.send(body);
+        fs.writeFileSync(localDestPath, body, {encoding: 'utf-8'});
+        return;
+      });
+    } else {
+      var r = request(plovrUrl);
+      r.on('response', function(response) {
+        response.headers['x-sourcemap'] = plovrSourcemap;
+      });
+      r.pipe(res);
+      r.pipe(fs.createWriteStream(localDestPath));
+      return;
+    }
   } else {
+    plovrUrl = plovrDomain+req.path;
     var r = request(plovrUrl);
-    r.on('response', function(response) {
-      response.headers['x-sourcemap'] = plovrSourcemap;
-    });
     r.pipe(res);
-    r.pipe(fs.createWriteStream(localDestPath));
-      return;
+    return;
   }
 });
 
@@ -96,7 +104,6 @@ var serveHtmlFiles = function(req, res, next, modulesOn) {
   }
   if(goog.string.endsWith(reqPath, '.html')) {
     localHtmlPath = localReqPath;
-    htmlPath = reqPath;
   }
   if(localHtmlPath) {
     if(!fs.existsSync(localHtmlPath)) {
