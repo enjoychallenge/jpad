@@ -33,32 +33,32 @@ example.module.index = function() {
     jpad.module.setLoaded(moduleInfos.APP);
   }
   
-  var btnel = goog.dom.getElement('btn');
-  var fst = 'this message shoud be FIRST';
-  var snd = 'this message shoud be SECOND';
-  
   console.log('app is running with jpad.ENABLE_MODULES='+jpad.ENABLE_MODULES);
-  goog.events.listenOnce(btnel, 'click', function(e) {
+  
+  var firstClick = function(e) {
     e.preventDefault();
-    console.log('inicial click');
+    console.log('initial click');
     var moduleInfo = moduleInfos.DIALOG;
-    console.log('loading module "'+moduleInfo.id+'"');
-    jpad.module.execOnLoad(moduleInfo, function () {
-      if(jpad.ENABLE_MODULES) {
-        console.log(snd);
-      } else {
-        console.log(fst);
-      }
-      console.log('module "'+moduleInfo.id+'" loaded? '+
-          jpad.module.isLoaded(moduleInfo));
-    }, this);
+    goog.asserts.assert(!jpad.module.isLoaded(moduleInfo));
+    
     if(jpad.ENABLE_MODULES) {
-      console.log(fst);
+      console.log('Because jpad.ENABLE_MODULES=true, '+
+          'module "'+moduleInfo.id+'" is not downloaded yet and so ' +
+          '"message A" will be first and "message B" second');
     } else {
-      console.log(snd);
+      console.log('Because jpad.ENABLE_MODULES=false, '+
+          'module "'+moduleInfo.id+'" is already downloaded and so ' +
+          '"message B" will be first and "message A" second');
     }
-  });
-
+    jpad.module.execOnLoad(moduleInfo, function () {
+      console.log('message B');
+      goog.asserts.assert(jpad.module.isLoaded(moduleInfo));
+    }, this);
+    console.log('message A');
+  };
+  
+  var btnel = goog.dom.getElement('btn');
+  goog.events.listenOnce(btnel, 'click', firstClick);
 
 };
 
