@@ -47,7 +47,9 @@ example.module.index = function() {
           '"message A" will be first and "message B" second');
     } else {
       console.log('Because jpad.ENABLE_MODULES=false, '+
-          'module "'+moduleInfo.id+'" is already downloaded and so ' +
+          'module "'+moduleInfo.id+'" is already downloaded. Furthermore ' +
+          'because example.module.dialog.Controller.prototype.init ' +
+          'calls callback synchronously, ' +
           '"message B" will be first and "message A" second');
     }
     jpad.module.execOnLoad(moduleInfo, function () {
