@@ -7,6 +7,7 @@ goog.require('goog.dom');
 goog.require('goog.events');
 goog.require('goog.module.ModuleManager');
 goog.require('goog.module.ModuleLoader');
+goog.require('goog.Uri');
 goog.require('jpad');
 goog.require('jpad.module');
 
@@ -17,6 +18,7 @@ example.module.index = function() {
   
   var moduleInfos = example.module.indexcfg.INFOS;
   
+  //setup goog.module.* as usual
   if (jpad.ENABLE_MODULES) {
     var moduleManager = goog.module.ModuleManager.getInstance();
     var moduleLoader = new goog.module.ModuleLoader();
@@ -59,9 +61,26 @@ example.module.index = function() {
     console.log('message A');
   };
   
-  var btnel = goog.dom.getElement('btn');
-  goog.events.listenOnce(btnel, 'click', firstClick);
+  var dgel = goog.dom.getElement('link-dialog');
+  goog.events.listenOnce(dgel, 'click', firstClick);
 
+  var modstel = goog.dom.getElement('modules-state');
+  goog.dom.setTextContent(modstel, 
+      jpad.ENABLE_MODULES ? 'enabled' : 'disabled');
+  
+  var uri = new goog.Uri(document.location);
+  var path = uri.getPath();
+  if(jpad.ENABLE_MODULES) {
+    path = path.substring('/modon'.length);
+  } else {
+    path = '/modon' + path;
+  }
+  var toggel = goog.dom.getElement('link-toggle-modules');
+  toggel.setAttribute('href', path);
+  goog.dom.setTextContent(toggel, 'Try it also with ' +
+      (jpad.ENABLE_MODULES ? 'disabled' : 'enabled') + ' modules');
+  
+  
 };
 
 

@@ -12,5 +12,7 @@ goog.require('example.module.dialog.Controller');
   var moduleInfo = example.module.indexcfg.INFOS.DIALOG;
   var controller = example.module.dialog.Controller.getInstance();
   moduleInfo.controller = controller;
-  controller.init(goog.bind(jpad.module.setLoaded, this, moduleInfo));
+  controller.init(function() {
+    jpad.module.setLoaded(moduleInfo);
+  });
 })();

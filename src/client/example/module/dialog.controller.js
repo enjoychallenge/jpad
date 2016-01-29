@@ -18,7 +18,7 @@ goog.addSingletonGetter(example.module.dialog.Controller);
  * @param {Function} callback
  */
 example.module.dialog.Controller.prototype.init = function(callback) {
-  var btnel = goog.dom.getElement('btn');
+  var btnel = goog.dom.getElement('link-dialog');
   goog.events.listen(btnel, 'click', function(e) {
     console.log('another click');
     e.preventDefault();
@@ -34,7 +34,7 @@ example.module.dialog.Controller.prototype.init = function(callback) {
  */
 example.module.dialog.Controller.prototype.showDialog = function() {
   var dialog = new goog.ui.Dialog();
-  dialog.setContent('I am your fancy dialog');
+  dialog.setContent('I am dialog from "dialog" module.');
   dialog.setTitle('Hello!');
   dialog.setButtonSet(goog.ui.Dialog.ButtonSet.createYesNoCancel());
   dialog.setVisible(true);
