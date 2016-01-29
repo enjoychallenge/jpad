@@ -3,10 +3,6 @@ goog.provide('example.extern.index');
 goog.require('example.City');
 goog.require('goog.asserts');
 goog.require('goog.dom');
-goog.require('ol.Map');
-goog.require('ol.View');
-goog.require('ol.layer.Tile');
-goog.require('ol.source.OSM');
 
 
 /**
@@ -14,24 +10,6 @@ goog.require('ol.source.OSM');
  */
 example.extern.index = function() {
 
-  var raster = new ol.layer.Tile({
-    source: new ol.source.OSM({
-      crossOrigin: null
-    })
-  });
-
-  var view = new ol.View({
-    center: [1877730, 6361175],
-    maxZoom: 13,
-    minZoom: 6,
-    zoom: 8
-  });
-
-  new ol.Map({
-    layers: [raster],
-    target: document.getElementById('map'),
-    view: view
-  });
   var opts = {
     myTitle: 'Brno'
   };
