@@ -24,7 +24,8 @@ var ol3ds = {
   srcClientMappings: [
     '**/*.png'
   ],
-  generateSourceMaps: false
+  generateSourceMaps: false,
+  buildWithModulesOn: false
 };
 
 module.exports = ol3ds;

@@ -1,6 +1,7 @@
 'use strict';
 var glob = require("glob");
 var path = require("path");
+var url = require("url");
 var fs = require("fs-extra");
 var exec = require('child_process').exec;
 var cheerio = require("cheerio");
@@ -12,7 +13,7 @@ goog.require('goog.string');
 
 module.exports = function (gulp, plugins, ol3dsCfg) {
   
-  gulp.task('build:clean', function (cb) {
+  gulp.task('build:clean', ['dev:clean-temp'], function (cb) {
     fs.removeSync('build');
     cb();
   });
@@ -45,18 +46,48 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
     cb();
   });
 
-  gulp.task('build:html', ['build:copy'], function (cb) {
+  gulp.task('build:html',
+      ['build:copy', 'precompile:js', 'precompile:plovr'],
+      function (cb) {
     goog.array.forEach(ol3ds.plovr.getHtmls(), function(htmlPath) {
       var localHtmlPath = path.resolve('.', htmlPath);
       var fcontent = fs.readFileSync(localHtmlPath);
       var $ = cheerio.load(fcontent);
       //replace links to *.plovr.json with compiled .js
+      var precompileModonPlovrPath;
+      var plovrModonJson;
+      var modonSrc;
+      var modonInfoPath;
+
       $('script[src$=\'.plovr.json\']').each(function(i, elem) {
           var src = $(this).attr('src');
           var srcBasename = path.basename(src, '.plovr.json');
-          src = srcBasename+'.js';
+          var modonPlovrPath =
+              path.join(path.dirname(src, '.plovr.json'), srcBasename)
+                + '.modon.plovr.json';
+          var localModonPlovrPath =
+              path.resolve(path.dirname(localHtmlPath), modonPlovrPath);
+          if(ol3dsCfg.buildWithModulesOn &&
+              fs.existsSync(localModonPlovrPath)) {
+            precompileModonPlovrPath =
+                ol3ds.plovr.srcToPrecompilePath(localModonPlovrPath);
+            var fcontent = fs.readFileSync(precompileModonPlovrPath);
+            plovrModonJson = JSON.parse(fcontent);
+            var moduleId = ol3ds.plovr.getMainModuleId(plovrModonJson);
+            modonInfoPath = path.basename(plovrModonJson['module-info-path']);
+            modonSrc = plovrModonJson['module-production-uri'];
+            modonSrc = modonSrc.replace('%s', moduleId);
+            src = modonSrc;
+          } else {
+            src = srcBasename+'.js';
+          }
           $(this).attr('src', src);
-      });
+      })
+      if(plovrModonJson) {
+        var insertedScript = 
+            '<script src="'+modonInfoPath+'" type="text/javascript"></script>';
+        $('script[src=\''+modonSrc+'\']').before(insertedScript);
+      }
       var htmlout = $.html();
       var outPath = path.resolve('./build/client',
           path.relative('src/client', htmlPath));
@@ -88,16 +119,32 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
       cb();
     }
     goog.array.forEach(mainPlovrCfgs, function(pth) {
-      var dst = path.relative('temp/precompile/client', pth);
+      var modonFolder = ol3dsCfg.modulesOnFolder;
+      var withModules = goog.string.contains(pth, '.'+modonFolder+'.');
+      var modFolder = withModules ? ol3dsCfg.modulesOnFolder :
+              ol3dsCfg.modulesOffFolder;
+      var dst = path.relative('temp/'+modFolder+'/precompile/client', pth);
       dst = path.join('build/client', dst);
       dst = path.join(path.dirname(dst),
           path.basename(dst, '.plovr.json'))+'.js';
       fs.mkdirsSync(path.dirname(dst));
       var cmd = 'java -jar bower_components/plovr/index.jar build ';
       if(useMap) {
-        cmd += '--create_source_map ' + dst + '.map ';
+        cmd += '--create_source_map ';
+        if(withModules) {
+          var fcontent = fs.readFileSync(pth);
+          var json = JSON.parse(fcontent);
+          var dstMap = path.dirname(dst) + 
+              json['module-production-uri'].replace('_%s.js', '');
+          cmd += dstMap;
+        } else {
+          cmd += dst + '.map ';
+        }
       }
-      cmd += pth + ' > ' + dst;
+      cmd += pth;
+      if(!withModules) {
+        cmd += ' > ' + dst;
+      }
       exec(cmd, function(error, stdout, stderr) {
         if(stdout) {
           console.log('stdout', pth, error.toString());
@@ -147,10 +194,18 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
       var processDeclarations = function(declarations) {
         goog.array.forEach(declarations, function(declaration) {
           var declval = declaration.value;
+          if(!declval) {
+            return;
+          }
           declval = declval.replace(
               /(^|^.* )url\(\s*(['"]?)(.+)\1\s*\)($| .*$)/gmi,
-              function(match, prefix, wrapper, pth, postfix) {
-                var completePath = path.resolve(path.dirname(fpath), pth);
+              function(match, prefix, wrapper, srcUrl, postfix) {
+                var srcUrlObject = url.parse(srcUrl, false, true);
+                if(srcUrlObject.host) {
+                  return prefix + 'url(' + wrapper + srcUrl + wrapper + ')' +
+                      postfix;
+                }
+                var completePath = path.resolve(path.dirname(fpath), srcUrl);
                 var relPath = path.relative('build/client/', completePath);
                 relPath = ol3dsCfg.appPath + relPath.replace(/\\/g, '/');
                 var result = prefix + 'url(' + wrapper + relPath;

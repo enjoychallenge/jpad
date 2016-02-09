@@ -39,12 +39,7 @@
     "goog.DEBUG": false,
     "goog.LOCALE": "cs",
     "goog.asserts.ENABLE_ASSERTS": false,
-    "goog.dom.ASSUME_STANDARDS_MODE": true,
-    "ol.ENABLE_DOM": false,
-    "ol.ENABLE_IMAGE": false,
-    "ol.ENABLE_VECTOR": false,
-    "ol.ENABLE_WEBGL": false,
-    "ol.ENABLE_PROJ4JS": false
+    "goog.dom.ASSUME_STANDARDS_MODE": true
   },
 
   "disambiguate-properties": true,

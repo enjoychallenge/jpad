@@ -171,6 +171,22 @@ plovr.updatePaths = function(json, plovrSrcPath, plovrDestPath, modulesOn) {
       return p;
     });
   }
+  if(json["module-output-path"]) {
+    var output = json["module-output-path"];
+    output = path.relative('./temp/'+modFolder+'/precompile/client', 
+        path.resolve(destDir, output));
+    output = path.relative(destDir, path.join('./build/client', output))
+        .replace(/\\/g, '/');
+    json["module-output-path"] = output;
+  }
+  if(json["module-info-path"]) {
+    output = json["module-info-path"];
+    output = path.relative('./temp/'+modFolder+'/precompile/client', 
+        path.resolve(destDir, output));
+    output = path.relative(destDir, path.join('./build/client', output))
+        .replace(/\\/g, '/');
+    json["module-info-path"] = output;
+  }
 };
 
 /**
@@ -202,6 +218,18 @@ plovr.getId = function(plovrJsonPath) {
   var fcontent = fs.readFileSync(plovrJsonPath);
   var json = JSON.parse(fcontent);
   return json['id'];
+};
+
+/**
+ * @param {Object} plovrJson
+ * @return {string}
+ */
+plovr.getMainModuleId = function(plovrJson) {
+  var moduleId = goog.object.findKey(plovrJson['modules'],
+      function (module) {
+        return !module['deps'].length;
+      });
+  return moduleId;
 };
 
 /**
@@ -264,12 +292,30 @@ plovr.getPrecompileMainConfigs = function() {
 };
 
 plovr.getMainConfigs = function() {
-  return glob.sync(ol3dsCfg.plovrPattern, {
-    ignore: [
-      'src/client/**/*.dev.plovr.json',
-      'src/client/**/*.'+ol3dsCfg.modulesOnFolder+'.plovr.json'
-    ]
+  var ignoreList = [
+    'src/client/**/*.dev.plovr.json'
+  ];
+  if(!ol3dsCfg.buildWithModulesOn) {
+    ignoreList.push('src/client/**/*.'+ol3dsCfg.modulesOnFolder+'.plovr.json');
+  }
+  var cfgs = glob.sync(ol3dsCfg.plovrPattern, {
+    ignore: ignoreList
   });
+  if(ol3dsCfg.buildWithModulesOn) {
+    var cfgsToRemove = [];
+    goog.array.forEach(cfgs, function(cfg) {
+      if(goog.string.endsWith(cfg, ol3dsCfg.modulesOnFolder+'.plovr.json')) {
+        var baseCfg = cfg.replace('.'+ol3dsCfg.modulesOnFolder+'.', '.');
+        if(goog.array.contains(cfgs, baseCfg)) {
+          cfgsToRemove.push(baseCfg);
+        }
+      }
+    });
+    goog.array.forEach(cfgsToRemove, function(cfg) {
+      goog.array.remove(cfgs, cfg);
+    });
+  }
+  return cfgs;
 };
 
 plovr.getHtmls = function() {

@@ -20,11 +20,18 @@ var argv = require('yargs')
         describe: 'Generate source maps for JS files.' +
             ' Related to \'build\' task only.'
     })
+    .option('m', {
+        type: 'boolean',
+        alias: 'modules',
+        describe: 'Compile into multiple modules.' +
+            ' Related to \'build\' task only.'
+    })
     .help('h')
     .alias('h', 'help')
     .argv;
 
 ol3dsCfg.generateSourceMaps = !!argv.s;
+ol3dsCfg.buildWithModulesOn = !!argv.m;
 
 function loadTask(task) {
     require('./tasks-gulp/' + task)(gulp, plugins, ol3dsCfg);

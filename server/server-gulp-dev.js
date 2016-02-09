@@ -84,7 +84,9 @@ app.use('/_compile', function(req, res, next) {
 
 goog.array.forEach(ol3dsCfg.libMappings, function(lm) {
   var physdir = (__dirname+'/../'+lm.src).replace(/\//g, path.sep);
-  app.use('/'+lm.dest, express.static(physdir));
+  app.use(appPath+lm.dest, express.static(physdir));
+  app.use('/'+ol3dsCfg.modulesOnFolder+appPath+lm.dest,
+      express.static(physdir));
 });
 
 var serveHtmlFiles = function(req, res, next, modulesOn) {
