@@ -9,6 +9,7 @@
     "goog.LOCALE": "cs",
     "goog.asserts.ENABLE_ASSERTS": true,
     "goog.dom.ASSUME_STANDARDS_MODE": true,
+    "jpad.DEV": true,
     "jpad.ENABLE_MODULES": true
   }
 

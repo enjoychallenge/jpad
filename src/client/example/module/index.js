@@ -68,17 +68,19 @@ example.module.index = function() {
   goog.dom.setTextContent(modstel, 
       jpad.ENABLE_MODULES ? 'enabled' : 'disabled');
   
-  var uri = new goog.Uri(document.location);
-  var path = uri.getPath();
-  if(jpad.ENABLE_MODULES) {
-    path = path.substring('/modon'.length);
-  } else {
-    path = '/modon' + path;
+  if(jpad.DEV) {
+    var uri = new goog.Uri(document.location);
+    var path = uri.getPath();
+    if(jpad.ENABLE_MODULES) {
+      path = path.substring('/modon'.length);
+    } else {
+      path = '/modon' + path;
+    }
+    var toggel = goog.dom.getElement('link-toggle-modules');
+    toggel.setAttribute('href', path);
+    goog.dom.setTextContent(toggel, 'Try it also with ' +
+        (jpad.ENABLE_MODULES ? 'disabled' : 'enabled') + ' modules');
   }
-  var toggel = goog.dom.getElement('link-toggle-modules');
-  toggel.setAttribute('href', path);
-  goog.dom.setTextContent(toggel, 'Try it also with ' +
-      (jpad.ENABLE_MODULES ? 'disabled' : 'enabled') + ' modules');
   
   
 };
