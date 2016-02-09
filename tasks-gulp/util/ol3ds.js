@@ -46,10 +46,16 @@ var getNamespaceParts = function(namespace) {
  * and file name
  */
 var getFileParts = function(filePath, opt_extension) {
-  var jspath = path.relative('src/client', filePath).replace(/\\/g, '/');
-  var dirparts = getDirNamesOfFile(jspath);
-  var extname = opt_extension || path.extname(jspath);
-  var fbasename = path.basename(jspath, extname);
+  var fpath = path.relative('src/client', filePath).replace(/\\/g, '/');
+  var dirparts = getDirNamesOfFile(fpath);
+  if(opt_extension !== undefined) {
+    var extname = opt_extension;
+  } else {
+    var extregex = /((?:\.(?:modon|modoff))?(?:\.dev)?(?:\.plovr)?\.(?:[^.]+))$/;
+    var extmatch = fpath.match(extregex);
+    extname = extmatch[1];
+  }
+  var fbasename = path.basename(fpath, extname);
   var fnameparts = fbasename.split('.');
   var firstSamePart = goog.array.find(dirparts, function(dp) {
     var dpidx = fnameparts.indexOf(dp);

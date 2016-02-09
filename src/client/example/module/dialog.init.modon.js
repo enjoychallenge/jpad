@@ -1,6 +1,6 @@
-goog.require('jpad.module');
-goog.require('jpad');
 goog.require('example.module.dialog.Controller');
+goog.require('jpad');
+goog.require('jpad.module');
 
 /**
  * Init for TECH module.

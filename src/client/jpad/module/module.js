@@ -12,7 +12,7 @@ jpad.module.ControllerGetter;
 
 
 /**
- * @typedef{{
+ * @typedef {{
  *   id: string,
  *   controller: (undefined|jpad.module.IController)
  * }}

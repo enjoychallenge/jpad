@@ -11,8 +11,8 @@ goog.require('jpad');
  * @extends {goog.events.EventTarget}
  */
 jpad.module.Manager = function() {
-  goog.events.EventTarget.call(this)
-  
+  goog.events.EventTarget.call(this);
+
   /**
    * Used only if jpad.ENABLE_MODULES is false.
    * Needed to ensure that controlle.init is called only once.
@@ -28,14 +28,13 @@ goog.inherits(jpad.module.Manager, goog.events.EventTarget);
 goog.addSingletonGetter(jpad.module.Manager);
 
 
-
 /**
  * Return true if module was already loaded and controller.init() called.
  * @param {jpad.module.Info} module
  * @return {boolean}
  */
 jpad.module.Manager.prototype.isLoaded = function(module) {
-if (jpad.ENABLE_MODULES) {
+  if (jpad.ENABLE_MODULES) {
     var moduleManager = goog.module.ModuleManager.getInstance();
     var info = moduleManager.getModuleInfo(module.id);
     return info.isLoaded();
@@ -71,15 +70,15 @@ jpad.module.Manager.prototype.execOnLoad =
   } else {
     if (!this.isLoaded(module)) {
       var c = module.controller;
-      goog.asserts.assert(!!c, 'Controller of jpad.module "'+module.id
-          +'" not yet set.');
+      goog.asserts.assert(!!c, 'Controller of jpad.module "' + module.id +
+          '" not yet set.');
       c.init(function() {
         jpad.module.setLoaded(module);
-        if(opt_fn) {
+        if (opt_fn) {
           opt_fn.call(opt_handler);
         }
       });
-    } else if(opt_fn) {
+    } else if (opt_fn) {
       opt_fn.call(opt_handler);
     }
   }

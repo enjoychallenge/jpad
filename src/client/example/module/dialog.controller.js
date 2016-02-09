@@ -1,7 +1,7 @@
 goog.provide('example.module.dialog.Controller');
 
-goog.require('jpad.module.IController');
 goog.require('goog.ui.Dialog');
+goog.require('jpad.module.IController');
 
 
 
@@ -24,11 +24,12 @@ example.module.dialog.Controller.prototype.init = function(callback) {
     e.preventDefault();
     this.showDialog();
   }, false, this);
-  
+
   this.showDialog();
-  
+
   callback();
 };
+
 
 /**
  */

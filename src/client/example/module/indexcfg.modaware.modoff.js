@@ -1,7 +1,7 @@
 goog.provide('example.module.indexcfg.modaware');
 
-goog.require('example.module.indexcfg');
 goog.require('example.module.dialog.Controller');
+goog.require('example.module.indexcfg');
 
 
 /**

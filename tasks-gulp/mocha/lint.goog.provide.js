@@ -21,14 +21,20 @@ describe('namespace', function() {
     return re;
   });
   
-  var findCorrectFile = function(namespace) {
+  var findCorrectFiles = function(namespace) {
     var parts = ol3ds.getNamespaceParts(namespace);
     namespace = parts.join('.');
-    var result = null;
+    var result = [];
+    var resultIdx = [];
     goog.array.forEach(jsregexps, function(jsregexp, idx) {
       if(namespace.match(jsregexp)) {
-        if(!result || result.split('.').length<jspartss[idx].length) {
-          result = jspaths[idx];
+        if(!result.length ||
+            jspartss[resultIdx[0]].length < jspartss[idx].length) {
+          result = [jspaths[idx]];
+          resultIdx = [idx];
+        } else if(jspartss[resultIdx[0]].length === jspartss[idx].length) {
+          result.push(jspaths[idx]);
+          resultIdx.push(idx);
         }
       }
     });
@@ -127,17 +133,17 @@ describe('namespace', function() {
           assert.equal(nsParts.length, originalLength);
         });
 
-        var correctFile = findCorrectFile(namespace);
-        var cfsuggestion = correctFile;
-        if(!cfsuggestion) {
+        var correctFiles = findCorrectFiles(namespace);
+        var cfsuggestions = correctFiles.concat();
+        if(!cfsuggestions.length) {
           var fnidx = correctDir.length ? correctDir.split('/').length : 0;
           fnidx = goog.math.clamp(fnidx, 0, nsParts.length-1);
-          cfsuggestion = path.join(completeCorrectDir, nsParts[fnidx]+'.js');
-          cfsuggestion = cfsuggestion.replace(/\\/g, '/');
+          var cfsuggestion = path.join(completeCorrectDir, nsParts[fnidx]+'.js');
+          cfsuggestions = [cfsuggestion.replace(/\\/g, '/')];
         }
         it('should be located in another file, e.g. '+cfsuggestion,
             function () {
-          assert.equal(completeFpath, cfsuggestion);
+          assert.include(cfsuggestions, completeFpath);
         });
       });
     });
