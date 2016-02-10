@@ -3,7 +3,7 @@ var path = require("path");
 var TreeModel = require("tree-model");
 var assert = require("chai").assert;
 var fs = require("fs-extra");
-var ol3ds = require('./../util/ol3ds.js');
+var jpad = require('./../util/jpad.js');
 
 require('./../../bower_components/closure-library/closure/goog/bootstrap/nodejs');
 goog.require('goog.array');
@@ -17,7 +17,7 @@ describe('plovr configuration', function() {
   
   goog.array.forEach(fnames, function(fname, fidx) {
     var completeFpath = fpaths[fidx];
-    var parts = ol3ds.getFileParts(completeFpath, '.plovr.json');
+    var parts = jpad.getFileParts(completeFpath, '.plovr.json');
     
     describe(completeFpath, function() {
       var fcontent = fs.readFileSync(completeFpath);

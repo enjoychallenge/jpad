@@ -1,6 +1,6 @@
 'use strict';
 var url = require('url');
-var ol3dsCfg = require('../../config.js');
+var jpadCfg = require('../../jpad.cfg.js');
 var fs = require("fs-extra");
 var path = require("path");
 var glob = require('glob');
@@ -89,9 +89,9 @@ var absolutizePathsInHtml = function($, htmlPath, includeModulesOnFolder) {
       if(!(goog.string.startsWith(href, '/') ||
           goog.string.contains(href, '//'))) {
         href = url.resolve('/'+htmlPath, href);
-        href = ol3dsCfg.appPath + href.substr(1);
+        href = jpadCfg.appPath + href.substr(1);
         if(includeModulesOnFolder) {
-          href = '/'+ol3dsCfg.modulesOnFolder + href;
+          href = '/'+jpadCfg.modulesOnFolder + href;
         }
         $(this).attr('href', href);
       }
@@ -101,9 +101,9 @@ var absolutizePathsInHtml = function($, htmlPath, includeModulesOnFolder) {
       if(!(goog.string.startsWith(src, '/') ||
           goog.string.contains(src, '//'))) {
         src = url.resolve('/'+htmlPath, src);
-        src = ol3dsCfg.appPath + src.substr(1);
+        src = jpadCfg.appPath + src.substr(1);
         if(includeModulesOnFolder) {
-          src = '/'+ol3dsCfg.modulesOnFolder + src;
+          src = '/'+jpadCfg.modulesOnFolder + src;
         }
         $(this).attr('src', src);
       }
@@ -121,9 +121,9 @@ var absolutizePathsInJs = function(ast, jsPath, includeModulesOnFolder) {
           goog.string.startsWith(node.value, './')) {
         var src = node.value;
         src = url.resolve('/'+jsPath, src);
-        src = ol3dsCfg.appPath + src.substr(1);
+        src = jpadCfg.appPath + src.substr(1);
         if(includeModulesOnFolder) {
-          src = '/'+ol3dsCfg.modulesOnFolder + src;
+          src = '/'+jpadCfg.modulesOnFolder + src;
         }
         //console.log('src', src);
         node.value = src;
@@ -158,8 +158,8 @@ plovr.updatePaths = function(json, plovrSrcPath, plovrDestPath, modulesOn) {
       return replacePath(p);
     })
   }
-  var modFolder = modulesOn ? ol3dsCfg.modulesOnFolder :
-          ol3dsCfg.modulesOffFolder;
+  var modFolder = modulesOn ? jpadCfg.modulesOnFolder :
+          jpadCfg.modulesOffFolder;
   if(json["paths"]) {
     json["paths"] = goog.array.map(json["paths"], function(p) {
       p = path.normalize(path.resolve(srcDir, p));
@@ -278,7 +278,7 @@ plovr.getDependentConfigs = function(srcCfgPath) {
 };
 
 plovr.getConfigs = function() {
-  return glob.sync(ol3dsCfg.plovrPattern);
+  return glob.sync(jpadCfg.plovrPattern);
 };
 
 plovr.getPrecompileConfigs = function() {
@@ -301,17 +301,17 @@ plovr.getMainConfigs = function() {
   var ignoreList = [
     'src/client/**/*.dev.plovr.json'
   ];
-  if(!ol3dsCfg.buildWithModulesOn) {
-    ignoreList.push('src/client/**/*.'+ol3dsCfg.modulesOnFolder+'.plovr.json');
+  if(!jpadCfg.buildWithModulesOn) {
+    ignoreList.push('src/client/**/*.'+jpadCfg.modulesOnFolder+'.plovr.json');
   }
-  var cfgs = glob.sync(ol3dsCfg.plovrPattern, {
+  var cfgs = glob.sync(jpadCfg.plovrPattern, {
     ignore: ignoreList
   });
-  if(ol3dsCfg.buildWithModulesOn) {
+  if(jpadCfg.buildWithModulesOn) {
     var cfgsToRemove = [];
     goog.array.forEach(cfgs, function(cfg) {
-      if(goog.string.endsWith(cfg, ol3dsCfg.modulesOnFolder+'.plovr.json')) {
-        var baseCfg = cfg.replace('.'+ol3dsCfg.modulesOnFolder+'.', '.');
+      if(goog.string.endsWith(cfg, jpadCfg.modulesOnFolder+'.plovr.json')) {
+        var baseCfg = cfg.replace('.'+jpadCfg.modulesOnFolder+'.', '.');
         if(goog.array.contains(cfgs, baseCfg)) {
           cfgsToRemove.push(baseCfg);
         }
@@ -325,15 +325,15 @@ plovr.getMainConfigs = function() {
 };
 
 plovr.getHtmls = function() {
-  return glob.sync(ol3dsCfg.plovrHtmlPattern);
+  return glob.sync(jpadCfg.plovrHtmlPattern);
 };
 
 plovr.srcToPrecompilePath = function(srcCfgPath) {
   var modulesOn = path.basename(srcCfgPath)
-      .indexOf('.'+ol3dsCfg.modulesOnFolder+'.') > -1;
+      .indexOf('.'+jpadCfg.modulesOnFolder+'.') > -1;
   var src = path.relative('./src', srcCfgPath);
-  var modFolder = modulesOn ? ol3dsCfg.modulesOnFolder :
-          ol3dsCfg.modulesOffFolder;
+  var modFolder = modulesOn ? jpadCfg.modulesOnFolder :
+          jpadCfg.modulesOffFolder;
   var result = path.join('./temp/'+modFolder+'/precompile', src);
   return result;
 };

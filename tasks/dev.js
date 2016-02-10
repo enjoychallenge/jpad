@@ -6,12 +6,12 @@ var plovrpathupd = require('./util/plovrpathupd.js');
 var vinylPaths = require('vinyl-paths');
 var path = require("path");
 var fs = require("fs-extra");
-var ol3ds =  require('../tasks/util/ol3ds.js');
+var jpad =  require('../tasks/util/jpad.js');
 var glob = require('glob');
 require('./../bower_components/closure-library/closure/goog/bootstrap/nodejs');
 goog.require('goog.array');
 
-module.exports = function (gulp, plugins, ol3dsCfg) {
+module.exports = function (gulp, plugins, jpadCfg) {
   var plovr;
   
   gulp.task('dev:clean-temp', function (cb) {
@@ -22,7 +22,7 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
   gulp.task('dev:serve:plovr', ['precompile:plovr', 'precompile:js'], function (cb) {
     //start plovr server
     var args = ['-jar', 'bower_components/plovr/index.jar', 'serve'];
-    var plovrConfigs = ol3ds.plovr.getPrecompileConfigs();
+    var plovrConfigs = jpad.plovr.getPrecompileConfigs();
     goog.array.extend(args, plovrConfigs);
     plovr = spawn('java', args);
     var logData = function (data) {
@@ -51,7 +51,7 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
     //restart dev server 
     gulp.watch([
       './src/server/dev.js',
-      './config.js'
+      './jpad.cfg.js'
     ], function() {
         server.start.apply(server);
     });
@@ -60,7 +60,7 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
   });
 
   gulp.task('dev:open', ['dev:serve'], function(){
-    var url = 'http://localhost:'+ol3dsCfg.port + ol3dsCfg.appPath;
+    var url = 'http://localhost:'+jpadCfg.port + jpadCfg.appPath;
     gulp.src(__filename)
         .pipe(plugins.open({
           uri: url
@@ -69,7 +69,7 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
   
   gulp.task('htmlpathabsmodoff', function() {
     var src = './src/client/**/*.html';
-    var modFolder = ol3dsCfg.modulesOffFolder;
+    var modFolder = jpadCfg.modulesOffFolder;
     var dest = './temp/'+modFolder+'/precompile/client';
     return gulp.src(src)
         .pipe(plugins.newer(dest))
@@ -79,7 +79,7 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
   
   gulp.task('htmlpathabsmodon', function() {
     var src = './src/client/**/*.html';
-    var modFolder = ol3dsCfg.modulesOnFolder;
+    var modFolder = jpadCfg.modulesOnFolder;
     var dest = './temp/'+modFolder+'/precompile/client';
     return gulp.src(src)
         .pipe(plugins.newer(dest))
@@ -95,7 +95,7 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
       '!src/client/**/*.externs.js',
       '!src/client/**/*.modon.js'
     ];
-    var modFolder = ol3dsCfg.modulesOffFolder;
+    var modFolder = jpadCfg.modulesOffFolder;
     var dest = './temp/'+modFolder+'/precompile/client';
     return gulp.src(src)
         .pipe(plugins.newer(dest))
@@ -109,7 +109,7 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
       '!src/client/**/*.externs.js',
       '!src/client/**/*.modoff.js'
     ];
-    var modFolder = ol3dsCfg.modulesOnFolder;
+    var modFolder = jpadCfg.modulesOnFolder;
     var dest = './temp/'+modFolder+'/precompile/client';
     return gulp.src(src)
         .pipe(plugins.newer(dest))
@@ -128,7 +128,7 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
       '!src/client/**/*.modon.plovr.json',
       '!src/client/**/*.modon.dev.plovr.json'
     ];
-    var modFolder = ol3dsCfg.modulesOffFolder;
+    var modFolder = jpadCfg.modulesOffFolder;
     var dest = './temp/'+modFolder+'/precompile/client';
     return gulp.src(src)
         .pipe(plugins.newer(dest))
@@ -139,7 +139,7 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
     var src = [
       'src/client/**/*.plovr.json'
     ];
-    var modFolder = ol3dsCfg.modulesOnFolder;
+    var modFolder = jpadCfg.modulesOnFolder;
     var dest = './temp/'+modFolder+'/precompile/client';
     return gulp.src(src)
         .pipe(plugins.newer(dest))
@@ -155,7 +155,7 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
   });
 
   gulp.task('compile:delete-js', function(cb) {
-    var modFolders = [ol3dsCfg.modulesOnFolder, ol3dsCfg.modulesOffFolder];
+    var modFolders = [jpadCfg.modulesOnFolder, jpadCfg.modulesOffFolder];
     var jss = glob.sync('./temp/@('+modFolders.join('|')+')/compile/**/*.js');
     goog.array.forEach(jss, function(js) {
       fs.unlinkSync(js);
@@ -171,9 +171,9 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
         plovrCfgs = goog.isArray(plovrCfgs) ? plovrCfgs : [plovrCfgs];
         goog.array.forEach(plovrCfgs, function(plovrCfg) {
           var modulesOn = path.basename(plovrCfg)
-              .indexOf('.'+ol3dsCfg.modulesOnFolder+'.') > -1;
-          var modFolder = modulesOn ? ol3dsCfg.modulesOnFolder :
-                  ol3dsCfg.modulesOffFolder;
+              .indexOf('.'+jpadCfg.modulesOnFolder+'.') > -1;
+          var modFolder = modulesOn ? jpadCfg.modulesOnFolder :
+                  jpadCfg.modulesOffFolder;
           var dest = './temp/'+modFolder+'/precompile/client';
           var srcp = path.relative('./src/client', plovrCfg);
           var destp = path.join(dest, srcp);
@@ -181,15 +181,15 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
             fs.unlinkSync(destp);
           }
           //delete compiled JS files
-          var depCfgs = ol3ds.plovr.getDependentConfigs(plovrCfg);
+          var depCfgs = jpad.plovr.getDependentConfigs(plovrCfg);
           var affectedCfgs = depCfgs.concat();
           affectedCfgs.push(path.normalize(path.resolve('.', plovrCfg)));
           
           goog.array.forEach(affectedCfgs, function(affCfg) {
             modulesOn = path.basename(affCfg)
-                .indexOf('.'+ol3dsCfg.modulesOnFolder+'.') > -1;
-            modFolder = modulesOn ? ol3dsCfg.modulesOnFolder :
-                    ol3dsCfg.modulesOffFolder;
+                .indexOf('.'+jpadCfg.modulesOnFolder+'.') > -1;
+            modFolder = modulesOn ? jpadCfg.modulesOnFolder :
+                    jpadCfg.modulesOffFolder;
             var relCfg = path.relative('./src/', affCfg);
             var affScript = path.join('./temp/'+modFolder+'/compile', relCfg);
             affScript = path.join(path.dirname(affScript),

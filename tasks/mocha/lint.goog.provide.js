@@ -3,7 +3,7 @@ var path = require("path");
 var TreeModel = require("tree-model");
 var assert = require("chai").assert;
 var fs = require("fs-extra");
-var ol3ds = require('./../util/ol3ds.js');
+var jpad = require('./../util/jpad.js');
 
 require('./../../bower_components/closure-library/closure/goog/bootstrap/nodejs');
 goog.require('goog.array');
@@ -13,7 +13,7 @@ describe('namespace', function() {
   var jspaths = glob.sync('src/client/**/*.js', {nodir: true});
   
   var jspartss = goog.array.map(jspaths, function(jspath) {
-    return ol3ds.getFileParts(jspath);
+    return jpad.getFileParts(jspath);
   });
   
   var jsregexps = goog.array.map(jspartss, function(jsparts) {
@@ -22,7 +22,7 @@ describe('namespace', function() {
   });
   
   var findCorrectFiles = function(namespace) {
-    var parts = ol3ds.getNamespaceParts(namespace);
+    var parts = jpad.getNamespaceParts(namespace);
     namespace = parts.join('.');
     var result = [];
     var resultIdx = [];
@@ -60,7 +60,7 @@ describe('namespace', function() {
   });
 
   var findCorrectDir = function(namespace) {
-    var parts = ol3ds.getNamespaceParts(namespace);
+    var parts = jpad.getNamespaceParts(namespace);
     var parentPath = parts.join('/');
     var parent = dirRoot.first(function(n) {
       return n.model.path === parentPath;
@@ -114,7 +114,7 @@ describe('namespace', function() {
 
     goog.array.forEach(namespaces, function(namespace) {
       describe(namespace, function() {
-        var nsParts = ol3ds.getNamespaceParts(namespace);
+        var nsParts = jpad.getNamespaceParts(namespace);
         var correctDirNode = findCorrectDir(namespace);
         var correctDir = correctDirNode.model.path;
         

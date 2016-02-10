@@ -3,10 +3,10 @@
 var express = require('express');
 var app = express();
 var path = require("path");
-var ol3dsCfg = require('./../../config.js');
+var jpadCfg = require('./../../jpad.cfg.js');
 
-var appPath = ol3dsCfg.appPath;
-var port = ol3dsCfg.port;
+var appPath = jpadCfg.appPath;
+var port = jpadCfg.port;
 
 var physdir = __dirname+'/../../build/client/'.replace(/\//g, path.sep);
 app.use(appPath, express.static(physdir, {

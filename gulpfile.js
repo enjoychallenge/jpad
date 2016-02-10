@@ -2,7 +2,7 @@ var gulp = require('gulp');
 var plugins = require('gulp-load-plugins')();
 require('./bower_components/closure-library/closure/goog/bootstrap/nodejs');
 var runSequence = require('run-sequence');
-var ol3dsCfg = require('./config.js');
+var jpadCfg = require('./jpad.cfg.js');
 
 var argv = require('yargs')
     .usage('Usage: gulp <command> [options]')
@@ -12,9 +12,9 @@ var argv = require('yargs')
         'source code style in Closure way immediately during editing.')
     .command('fix', 'Fix source code style in Closure way.')
     .command('fixlint', 'Fix and lint source code style ' +
-        'in Closure and ol3ds way.')
+        'in Closure and jpad way.')
     .command('install', 'Install Closure Linter and ol3 externs.')
-    .command('lint', 'Lint source code style in Closure and ol3ds way.')
+    .command('lint', 'Lint source code style in Closure and jpad way.')
     .option('s', {
         type: 'boolean',
         alias: 'sourcemap',
@@ -31,11 +31,11 @@ var argv = require('yargs')
     .alias('h', 'help')
     .argv;
 
-ol3dsCfg.generateSourceMaps = !!argv.s;
-ol3dsCfg.buildWithModulesOn = !!argv.m;
+jpadCfg.generateSourceMaps = !!argv.s;
+jpadCfg.buildWithModulesOn = !!argv.m;
 
 function loadTask(task) {
-    require('./tasks/' + task)(gulp, plugins, ol3dsCfg);
+    require('./tasks/' + task)(gulp, plugins, jpadCfg);
 }
 loadTask('build');
 loadTask('dev');

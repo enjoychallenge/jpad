@@ -2,7 +2,7 @@ var through = require('through2');
 var gutil = require('gulp-util');
 var PluginError = gutil.PluginError;
 var StringDecoder = require('string_decoder').StringDecoder;
-var ol3ds = require('./ol3ds.js');
+var jpad = require('./jpad.js');
 var recast = require("recast");
 
 
@@ -22,7 +22,7 @@ function jsPathAbsolutizer(options) {
       try {
         var ast = recast.parse(intxt);
         
-        ol3ds.absolutizePathsInJs(ast, file.relative,
+        jpad.absolutizePathsInJs(ast, file.relative,
           options.includeModulesOnFolder);
         var output = recast.print(ast).code;
         var outtxt = output;

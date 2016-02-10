@@ -1,4 +1,4 @@
-# Rules of ol3ds code style
+# Rules of jpad code style
 
 ## Source files for client
 
@@ -34,7 +34,7 @@ File path and name | Formed sequence
 `src/client/path/to/file.and.something.else.js` | `path.to.file.and.something.else`
 `src/client/path/to/file/file.and.something.else.js` | `path.to.file.and.something.else`
 `src/client/path/to/file/path.to.file.and.something.else.js` | `path.to.file.and.something.else`
-TODO: Avoid duplicate sequences (by ol3ds linter).
+TODO: Avoid duplicate sequences (by jpad linter).
 
 ### JS files
 * Every `*.js` inside `src/client` directory is ready for compilation using Closure Compiler's advanced mode. Exceptions:
@@ -46,7 +46,7 @@ TODO: Avoid duplicate sequences (by ol3ds linter).
     * `path.to.FILE_`
     * `path.to.file.and.something.else`
     * etc.
-* String literals starting with `./` are treated as **dir-relative or file-relative paths** that will be automatically transformed to domain-relative paths by ol3ds (because of HTML5 replaceState / pushState). **Always use one string literal containing complete path and filename!**
+* String literals starting with `./` are treated as **dir-relative or file-relative paths** that will be automatically transformed to domain-relative paths by jpad (because of HTML5 replaceState / pushState). **Always use one string literal containing complete path and filename!**
   * This is right: `var imgPath = './my.first.app.logo.png';`
   * This is wrong: ~~`var imgPath = 'my.first.app.logo.png';`~~
   * This is wrong: ~~`var imgPath = './my.first.app.logo' + '.png';`~~
@@ -57,7 +57,7 @@ TODO: Avoid duplicate sequences (by ol3ds linter).
 * Reference to Plovr config is done by Plovr config file name, not by `http://plovrserver/compile?id=...`
   * Inside `example.ol3.index.html` you can find `<script src="example.ol3.index.plovr.json" type="text/javascript"></script>`
 * If there is a file `*.dev.plovr.json`, it is a plovr configuration used for dev process.
-  * Do not use link to `*.dev.plovr.json` inside HTML. Use link to main `*.plovr.json` and ol3ds will make the replacement automatically.
+  * Do not use link to `*.dev.plovr.json` inside HTML. Use link to main `*.plovr.json` and jpad will make the replacement automatically.
 * Extern files (`*.externs.js`) are not precompiled, but it must be specified as externs inside `*.plovr.json`.
 
 * **TODO: Do not use CSS minification options of Plovr.** Use CSS [@import](https://developer.mozilla.org/en-US/docs/Web/CSS/@import) instead.

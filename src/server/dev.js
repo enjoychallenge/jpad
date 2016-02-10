@@ -8,23 +8,23 @@ var app = express();
 var path = require("path");
 var fs = require("fs-extra");
 var cheerio = require("cheerio");
-var ol3dsCfg = require('./../../config.js');
-var ol3ds =  require('../../tasks/util/ol3ds.js');
+var jpadCfg = require('./../../jpad.cfg.js');
+var jpad =  require('../../tasks/util/jpad.js');
 var request = require("request");
 var gulp = require('gulp');
 var gulpPlugins = require('gulp-load-plugins')();
 
-var appPath = ol3dsCfg.appPath;
-var port = ol3dsCfg.port;
+var appPath = jpadCfg.appPath;
+var port = jpadCfg.port;
 
-require('./../../tasks/dev')(gulp, gulpPlugins, ol3dsCfg);
+require('./../../tasks/dev')(gulp, gulpPlugins, jpadCfg);
 
 //deal with compiled JS files
 app.use('/_compile', function(req, res, next) {
   var modulesOn = path.basename(req.path)
-      .indexOf('.'+ol3dsCfg.modulesOnFolder+'.') > -1;
-  var modFolder = modulesOn ? ol3dsCfg.modulesOnFolder :
-          ol3dsCfg.modulesOffFolder;
+      .indexOf('.'+jpadCfg.modulesOnFolder+'.') > -1;
+  var modFolder = modulesOn ? jpadCfg.modulesOnFolder :
+          jpadCfg.modulesOffFolder;
   
   var plovrDomain = 'http://localhost:9810';
   
@@ -45,7 +45,7 @@ app.use('/_compile', function(req, res, next) {
         path.basename(localDestPath, '.plovr.json')+'.js'
     );
 
-    var plovrId = ol3ds.plovr.getId(localSrcPath);
+    var plovrId = jpad.plovr.getId(localSrcPath);
     var plovrUrl = plovrDomain+'/compile?id='+plovrId;
     var plovrSourcemap = plovrDomain+'/sourcemap?id='+plovrId;
 
@@ -57,7 +57,7 @@ app.use('/_compile', function(req, res, next) {
 
     fs.ensureDirSync(path.dirname(localDestPath));
 
-    var plovrMode = ol3ds.plovr.getCompilerMode(localSrcPath);
+    var plovrMode = jpad.plovr.getCompilerMode(localSrcPath);
     if(plovrMode==='RAW') {
       var r = request(plovrUrl, function (error, response, body) {
         body = body.replace("var path = '/compile';", "var path = '/_compile';");
@@ -82,10 +82,10 @@ app.use('/_compile', function(req, res, next) {
   }
 });
 
-goog.array.forEach(ol3dsCfg.libMappings, function(lm) {
+goog.array.forEach(jpadCfg.libMappings, function(lm) {
   var physdir = (__dirname+'/../../'+lm.src).replace(/\//g, path.sep);
   app.use(appPath+lm.dest, express.static(physdir));
-  app.use('/'+ol3dsCfg.modulesOnFolder+appPath+lm.dest,
+  app.use('/'+jpadCfg.modulesOnFolder+appPath+lm.dest,
       express.static(physdir));
 });
 
@@ -116,8 +116,8 @@ var serveHtmlFiles = function(req, res, next, modulesOn) {
     gulp.start(gulpTask, function(err) {
       var precompiledPath =
           path.relative(__dirname+'/../../src/client/', localHtmlPath);
-      var modFolder = modulesOn ? ol3dsCfg.modulesOnFolder :
-          ol3dsCfg.modulesOffFolder;
+      var modFolder = modulesOn ? jpadCfg.modulesOnFolder :
+          jpadCfg.modulesOffFolder;
       precompiledPath = __dirname+'/../../temp/'+modFolder+
           '/precompile/client/'+precompiledPath;
       precompiledPath = path.normalize(precompiledPath);
@@ -130,7 +130,7 @@ var serveHtmlFiles = function(req, res, next, modulesOn) {
           var srcName = path.basename(src);
           var srcBasename = path.basename(src, '.plovr.json');
           if(modulesOn) {
-            srcBasename += '.'+ol3dsCfg.modulesOnFolder;
+            srcBasename += '.'+jpadCfg.modulesOnFolder;
             srcName = srcBasename + '.plovr.json';
           }
           var srcPlovrPath =
@@ -159,7 +159,7 @@ var serveHtmlFiles = function(req, res, next, modulesOn) {
 };
 
 //deal with HTML files
-app.use('/'+ol3dsCfg.modulesOnFolder+appPath, function(req, res, next) {
+app.use('/'+jpadCfg.modulesOnFolder+appPath, function(req, res, next) {
   serveHtmlFiles(req, res, next, true);
 });
 
@@ -172,7 +172,7 @@ var physdir = __dirname+'/../../src/client/'.replace(/\//g, path.sep);
 app.use(appPath, express.static(physdir, {
   redirect: true
 }));
-app.use('/'+ol3dsCfg.modulesOnFolder+appPath, express.static(physdir, {
+app.use('/'+jpadCfg.modulesOnFolder+appPath, express.static(physdir, {
   redirect: true
 }));
 

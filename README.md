@@ -1,6 +1,8 @@
-# ol3 devstack
+# jpad
 
-* [OpenLayers 3](ol3js.org) & [Google Closure](https://developers.google.com/closure/) devstack ready for [advanced optimizations](https://developers.google.com/closure/compiler/docs/compilation_levels) using [plovr](https://github.com/bolinfest/plovr)
+JS devstack including
+* [OpenLayers 3](ol3js.org)
+* [Google Closure](https://developers.google.com/closure/) ready for [advanced optimizations](https://developers.google.com/closure/compiler/docs/compilation_levels) using [plovr](https://github.com/bolinfest/plovr)
 * [fixjsstyle and gjslint](https://developers.google.com/closure/utilities/docs/linter_howto) included
 * both Linux and Windows friendly
 
@@ -24,8 +26,8 @@ This repository is not officially supported by Google, ol3, or individual module
 
 ## Installation
 ```
-git clone https://github.com/jirik/ol3ds.git
-cd ol3ds
+git clone https://github.com/jirik/ol3ds.git jpad
+cd jpad
 npm install
 bower install
 sudo gulp install (Linux) / gulp install (Windows)

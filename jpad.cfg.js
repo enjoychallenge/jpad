@@ -1,6 +1,6 @@
 'use strict';
 
-var ol3ds = {
+var jpad = {
   appPath: '/path/to/application/',
   plovrPattern: 'src/client/**/*.plovr.json',
   plovrHtmlPattern: 'src/client/**/*.html',
@@ -28,4 +28,4 @@ var ol3ds = {
   buildWithModulesOn: false
 };
 
-module.exports = ol3ds;
+module.exports = jpad;

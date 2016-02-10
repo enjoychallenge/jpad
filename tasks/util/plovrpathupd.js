@@ -2,9 +2,9 @@ var through = require('through2');
 var gutil = require('gulp-util');
 var PluginError = gutil.PluginError;
 var StringDecoder = require('string_decoder').StringDecoder;
-var ol3ds = require('./ol3ds.js');
+var jpad = require('./jpad.js');
 var path = require("path");
-var ol3dsCfg = require('../../config.js');
+var jpadCfg = require('../../jpad.cfg.js');
 
 
 
@@ -25,13 +25,13 @@ function plovrPathUpdater(options) {
       
       var srcPath = file.path;
       var destPath = path.relative('./src/client', srcPath);
-      var modFolder = options.modulesOn ? ol3dsCfg.modulesOnFolder : 
-          ol3dsCfg.modulesOffFolder;
+      var modFolder = options.modulesOn ? jpadCfg.modulesOnFolder : 
+          jpadCfg.modulesOffFolder;
       destPath = path.join('./temp/'+modFolder+'/precompile/client', destPath);
       destPath = path.resolve('.', destPath);
       //console.log(destPath);
 
-      ol3ds.plovr.updatePaths(json, srcPath, destPath, options.modulesOn);
+      jpad.plovr.updatePaths(json, srcPath, destPath, options.modulesOn);
       var output = JSON.stringify(json, null, '  ');
       var outtxt = output;
       file.contents = new Buffer(outtxt);

@@ -3,7 +3,7 @@ var gutil = require('gulp-util');
 var PluginError = gutil.PluginError;
 var StringDecoder = require('string_decoder').StringDecoder;
 var cheerio = require('cheerio');
-var ol3ds = require('./ol3ds.js');
+var jpad = require('./jpad.js');
 
 var PLUGIN_NAME = 'gulp-html-path-abs';
 
@@ -25,7 +25,7 @@ function htmlPathAbsolutizer(options) {
     if (file.isBuffer()) {
       var intxt = decoder.write(file.contents);
       var $ = cheerio.load(intxt);
-      ol3ds.absolutizePathsInHtml($, file.relative,
+      jpad.absolutizePathsInHtml($, file.relative,
           options.includeModulesOnFolder);
       var outtxt = $.html();
       file.contents = new Buffer(outtxt);

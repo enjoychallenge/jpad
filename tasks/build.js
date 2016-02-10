@@ -5,13 +5,13 @@ var url = require("url");
 var fs = require("fs-extra");
 var exec = require('child_process').exec;
 var cheerio = require("cheerio");
-var ol3ds =  require('../tasks/util/ol3ds.js');
+var jpad =  require('../tasks/util/jpad.js');
 
 require('./../bower_components/closure-library/closure/goog/bootstrap/nodejs');
 goog.require('goog.array');
 goog.require('goog.string');
 
-module.exports = function (gulp, plugins, ol3dsCfg) {
+module.exports = function (gulp, plugins, jpadCfg) {
   
   gulp.task('build:clean', ['dev:clean-temp'], function (cb) {
     fs.removeSync('build');
@@ -19,7 +19,7 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
   });
 
   gulp.task('build:copy', ['build:clean'], function (cb) {
-    goog.array.forEach(ol3dsCfg.libMappings, function(lm) {
+    goog.array.forEach(jpadCfg.libMappings, function(lm) {
       var src = lm.src;
       var dest = lm.dest;
       dest = path.join('build/client', dest);
@@ -28,7 +28,7 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
         fs.copySync(src, dest);
       });
     });
-    goog.array.forEach(ol3dsCfg.srcClientMappings, function(fm) {
+    goog.array.forEach(jpadCfg.srcClientMappings, function(fm) {
       if(goog.isString(fm)) {
         var src = fm;
         var cwd = path.join(process.cwd(), 'src/client');
@@ -49,7 +49,7 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
   gulp.task('build:html',
       ['build:copy', 'precompile:js', 'precompile:plovr'],
       function (cb) {
-    goog.array.forEach(ol3ds.plovr.getHtmls(), function(htmlPath) {
+    goog.array.forEach(jpad.plovr.getHtmls(), function(htmlPath) {
       var localHtmlPath = path.resolve('.', htmlPath);
       var fcontent = fs.readFileSync(localHtmlPath);
       var $ = cheerio.load(fcontent);
@@ -67,13 +67,13 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
                 + '.modon.plovr.json';
           var localModonPlovrPath =
               path.resolve(path.dirname(localHtmlPath), modonPlovrPath);
-          if(ol3dsCfg.buildWithModulesOn &&
+          if(jpadCfg.buildWithModulesOn &&
               fs.existsSync(localModonPlovrPath)) {
             precompileModonPlovrPath =
-                ol3ds.plovr.srcToPrecompilePath(localModonPlovrPath);
+                jpad.plovr.srcToPrecompilePath(localModonPlovrPath);
             var fcontent = fs.readFileSync(precompileModonPlovrPath);
             plovrModonJson = JSON.parse(fcontent);
-            var moduleId = ol3ds.plovr.getMainModuleId(plovrModonJson);
+            var moduleId = jpad.plovr.getMainModuleId(plovrModonJson);
             modonInfoPath = path.basename(plovrModonJson['module-info-path']);
             modonSrc = plovrModonJson['module-production-uri'];
             modonSrc = modonSrc.replace('%s', moduleId);
@@ -101,7 +101,7 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
       var fcontent = fs.readFileSync(localHtmlPath);
       var $ = cheerio.load(fcontent);
       var htmlPath = path.relative('build/client', htmlPath);
-      ol3ds.absolutizePathsInHtml($, htmlPath);
+      jpad.absolutizePathsInHtml($, htmlPath);
       var htmlout = $.html();
       fs.writeFileSync(localHtmlPath, htmlout, {encoding: 'utf-8'});
     });
@@ -112,17 +112,17 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
   gulp.task('build:plovr',
       ['build:copy', 'precompile:js', 'precompile:plovr'],
       function (cb) {
-    var useMap = ol3dsCfg.generateSourceMaps;
-    var mainPlovrCfgs = ol3ds.plovr.getPrecompileMainConfigs();
+    var useMap = jpadCfg.generateSourceMaps;
+    var mainPlovrCfgs = jpad.plovr.getPrecompileMainConfigs();
     var ncmds = mainPlovrCfgs.length;
     if(!ncmds) {
       cb();
     }
     goog.array.forEach(mainPlovrCfgs, function(pth) {
-      var modonFolder = ol3dsCfg.modulesOnFolder;
+      var modonFolder = jpadCfg.modulesOnFolder;
       var withModules = goog.string.contains(pth, '.'+modonFolder+'.');
-      var modFolder = withModules ? ol3dsCfg.modulesOnFolder :
-              ol3dsCfg.modulesOffFolder;
+      var modFolder = withModules ? jpadCfg.modulesOnFolder :
+              jpadCfg.modulesOffFolder;
       var dst = path.relative('temp/'+modFolder+'/precompile/client', pth);
       dst = path.join('build/client', dst);
       dst = path.join(path.dirname(dst),
@@ -207,7 +207,7 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
                 }
                 var completePath = path.resolve(path.dirname(fpath), srcUrl);
                 var relPath = path.relative('build/client/', completePath);
-                relPath = ol3dsCfg.appPath + relPath.replace(/\\/g, '/');
+                relPath = jpadCfg.appPath + relPath.replace(/\\/g, '/');
                 var result = prefix + 'url(' + wrapper + relPath;
                 result += wrapper + ')' + postfix;
                 return result;
@@ -243,8 +243,8 @@ module.exports = function (gulp, plugins, ol3dsCfg) {
 
   gulp.task('build:open', ['build:serve'],
       function(){
-        var url = 'http://localhost:'+ol3dsCfg.port +
-            ol3dsCfg.appPath;
+        var url = 'http://localhost:'+jpadCfg.port +
+            jpadCfg.appPath;
         gulp.src(__filename)
             .pipe(plugins.open({
               uri: url
