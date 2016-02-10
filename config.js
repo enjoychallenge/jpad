@@ -1,14 +1,12 @@
 'use strict';
-var glob = require('glob');
 
-var plovrPattern = 'src/client/**/*.plovr.json';
 var ol3ds = {
   appPath: '/path/to/application/',
-  plovrCfgs: glob.sync(plovrPattern),
-  mainPlovrCfgs: glob.sync(plovrPattern, {
-    ignore: 'src/client/**/*.debug.plovr.json'
-  }),
+  plovrPattern: 'src/client/**/*.plovr.json',
+  plovrHtmlPattern: 'src/client/**/*.html',
   port: 9000,
+  modulesOffFolder: 'modoff',
+  modulesOnFolder: 'modon',
   libMappings: [
     {
       src: 'bower_components/ol3/css/',
@@ -17,12 +15,17 @@ var ol3ds = {
     {
       src: 'bower_components/ol3/examples/resources/',
       dest: '_lib/ol3/examples/resources/'
+    },
+    {
+      src: 'bower_components/closure-library/closure/goog/css/',
+      dest: '_lib/closure-library/closure/goog/css/'
     }
   ],
   srcClientMappings: [
     '**/*.png'
   ],
-  generateSourceMaps: false
+  generateSourceMaps: false,
+  buildWithModulesOn: false
 };
 
 module.exports = ol3ds;

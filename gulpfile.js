@@ -1,18 +1,29 @@
 var gulp = require('gulp');
 var plugins = require('gulp-load-plugins')();
 require('./bower_components/closure-library/closure/goog/bootstrap/nodejs');
-var glob = require('glob');
+var runSequence = require('run-sequence');
 var ol3dsCfg = require('./config.js');
-
 
 var argv = require('yargs')
     .usage('Usage: gulp <command> [options]')
-    .command('dev', 'Run dev server and open app.')
     .command('build', 'Compile and refactor files for publishing.')
+    .command('dev', 'Run dev server and open app.')
+    .command('devlint', 'Run watcher for linting and fixing ' +
+        'source code style in Closure way immediately during editing.')
+    .command('fix', 'Fix source code style in Closure way.')
+    .command('fixlint', 'Fix and lint source code style ' +
+        'in Closure and ol3ds way.')
+    .command('lint', 'Lint source code style in Closure and ol3ds way.')
     .option('s', {
         type: 'boolean',
         alias: 'sourcemap',
         describe: 'Generate source maps for JS files.' +
+            ' Related to \'build\' task only.'
+    })
+    .option('m', {
+        type: 'boolean',
+        alias: 'modules',
+        describe: 'Compile into multiple modules.' +
             ' Related to \'build\' task only.'
     })
     .help('h')
@@ -20,15 +31,20 @@ var argv = require('yargs')
     .argv;
 
 ol3dsCfg.generateSourceMaps = !!argv.s;
+ol3dsCfg.buildWithModulesOn = !!argv.m;
 
 function loadTask(task) {
-    require('./tasks-gulp/' + task)(gulp, plugins, ol3dsCfg);
+    require('./tasks/' + task)(gulp, plugins, ol3dsCfg);
 }
 loadTask('build');
 loadTask('dev');
-loadTask('dev-lint');
+loadTask('devlint');
 loadTask('fix');
+loadTask('install');
 loadTask('lint');
 
-gulp.task('fixlint', ['fix', 'lint']);
+gulp.task('fixlint', function(cb) {
+  runSequence('fix', 'lint', cb);
+});
+
 gulp.task('default', ['dev']);

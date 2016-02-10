@@ -1,27 +1,25 @@
 'use strict';
 
-module.exports = function(grunt) {
-  var plovrConfigs = grunt.config('plovrConfigs');
-  if(!plovrConfigs) {
-    throw new Error('`plovrConfigs` required');
-  }
+module.exports = function (gulp, plugins) {
+  
+  gulp.task('fix', function (cb) {
 
-  grunt.config.merge({
-    shell: {
-      fixjs: {
-        command: ['fixjsstyle', 
+    var exec = require('child_process').exec;
+ 
+    var cmd = ['fixjsstyle', 
           '--jslint_error=all',
-          '--custom_jsdoc_tags=event,fires,api,observable',
+          //'--custom_jsdoc_tags=event,fires,api,observable',
           '--strict',
           '-r',
           'src/client'
-        ].join(' ')
-      }
-    }
+        ].join(' ');
+    
+    exec(cmd, function (err, stdout, stderr) {
+//      console.log(stdout);
+//      console.log(stderr);
+      cb(err);
+    });
   });
-
-  require('load-grunt-tasks')(grunt);
-
-  
-  grunt.registerTask('fix', ['shell:fixjs']);
 };
+
+
