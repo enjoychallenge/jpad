@@ -40,6 +40,7 @@ loadTask('build');
 loadTask('dev');
 loadTask('devlint');
 loadTask('fix');
+loadTask('install');
 loadTask('lint');
 
 gulp.task('fixlint', function(cb) {
