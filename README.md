@@ -26,7 +26,7 @@ This repository is not officially supported by Google, ol3, or individual module
 
 ## Installation
 ```
-git clone https://github.com/jirik/jpad.git jpad
+git clone https://github.com/jirik/jpad.git
 cd jpad
 npm install
 bower install
