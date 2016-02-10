@@ -13,6 +13,7 @@ var argv = require('yargs')
     .command('fix', 'Fix source code style in Closure way.')
     .command('fixlint', 'Fix and lint source code style ' +
         'in Closure and ol3ds way.')
+    .command('install', 'Install Closure Linter and ol3 externs.')
     .command('lint', 'Lint source code style in Closure and ol3ds way.')
     .option('s', {
         type: 'boolean',
