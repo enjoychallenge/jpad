@@ -1,206 +1,266 @@
 'use strict';
+var glob = require("glob");
+var path = require("path");
+var url = require("url");
+var fs = require("fs-extra");
+var exec = require('child_process').exec;
+var cheerio = require("cheerio");
+var ol3ds =  require('../tasks/util/ol3ds.js');
+
 require('./../bower_components/closure-library/closure/goog/bootstrap/nodejs');
-goog.require('goog.Uri');
 goog.require('goog.array');
 goog.require('goog.string');
 
-var fse = require('fs-extra');
-var path = require('path');
-
-module.exports = function(grunt) {
-  /*var plovrConfigs = this.data.plovrConfigs;
-  if(!plovrConfigs) {
-    throw new Error('`plovrConfigs` required');
-  }*/
-  var prodPlovrConfigs = grunt.config('prodPlovrConfigs');
-  if(!prodPlovrConfigs) {
-    throw new Error('`prodPlovrConfigs` required');
-  }
-  var plovrIds = grunt.config('plovrIds');
-  if(!plovrIds) {
-    throw new Error('`provrIds` required');
-  }
-  var publBowerFiles = grunt.config('publBowerFiles');
-  if(!publBowerFiles) {
-    throw new Error('`publBowerFiles` required');
-  }
-  var publSrcFiles = grunt.config('publSrcFiles');
-  if(!publSrcFiles) {
-    throw new Error('`publSrcFiles` required');
-  }
+module.exports = function (gulp, plugins, ol3dsCfg) {
   
-  grunt.config.merge({
-    clean: {
-      build: ["build/client"]
-    },
-    copy: {
-      fromBower: {
-        files: publBowerFiles
-      },
-      fromSrc: {
-        files: publSrcFiles
-      }
-    },
-    shell: {
-      buildUsingPlovr: {
-        command: goog.array.map(prodPlovrConfigs, function(pth) {
-          var useMap = grunt.option('map');
-          var dst = pth.replace('src/client/', 'build/client/');
-          dst = dst.replace('.plovr.json', '.js');
-          var result = 'java -jar bower_components/plovr/index.jar build ';
-          if(useMap) {
-            result += '--create_source_map ' + dst + '.map ';
-          }
-          result += pth + ' > ' + dst;
-          return result;
-        }).join('&')
-      },
-      buildCss: {
-        command: 'gulp build:css'
-      }
-    },
-    createBuildHtml: {
-      my: {
-        files: publBowerFiles
-      }
-    },
-    open: {
-      build: {
-        path: 'http://localhost:9000/build/client/'
-      }
-    }
+  gulp.task('build:clean', ['dev:clean-temp'], function (cb) {
+    fs.removeSync('build');
+    cb();
   });
 
-  require('load-grunt-tasks')(grunt);
-
-
-  grunt.registerTask(
-      'addSourceMapUrl',
-      'Add source map URL if map option is true.',
-      function() {
-        goog.array.forEach(prodPlovrConfigs, function(pth) {
-          var dst = pth.replace('src/client/', 'build/client/');
-          dst = dst.replace('.plovr.json', '.js');
-          var cnt = grunt.file.read(dst);
-          cnt += '//# sourceMappingURL='+path.basename(dst)+'.map';
-          grunt.file.write(dst, cnt);
-        });
-      }
-  );
-
-
-  grunt.registerMultiTask(
-    'createBuildHtml',
-    'Creating build/client/**/*.html',
-    function() {
-      
-      //taken from grunt-contrib-copy
-      var dest;
-      var isExpandedPair;
-      
-      var urlsToReplace = [];
-      
-      this.files.forEach(function(filePair) {
-        isExpandedPair = filePair.orig.expand || false;
-
-        filePair.src.forEach(function(src) {
-          if (detectDestType(filePair.dest) === 'directory') {
-            dest = (isExpandedPair) ? filePair.dest : unixifyPath(path.join(filePair.dest, src));
-          } else {
-            dest = filePair.dest;
-          }
-          urlsToReplace.push({
-            src: src,
-            dest: path.relative('build/client/', dest)
-          });
-        });
+  gulp.task('build:copy', ['build:clean'], function (cb) {
+    goog.array.forEach(ol3dsCfg.libMappings, function(lm) {
+      var src = lm.src;
+      var dest = lm.dest;
+      dest = path.join('build/client', dest);
+      var srcs = glob.sync(src);
+      goog.array.forEach(srcs, function(src) {
+        fs.copySync(src, dest);
       });
-      //end of grunt-contrib-copy
+    });
+    goog.array.forEach(ol3dsCfg.srcClientMappings, function(fm) {
+      if(goog.isString(fm)) {
+        var src = fm;
+        var cwd = path.join(process.cwd(), 'src/client');
+        var srcs = glob.sync(src, {
+          cwd: cwd
+        });
+        goog.array.forEach(srcs, function(src) {
+          fs.copySync(path.join('src/client', src),
+              path.join('build/client', src));
+        });
+      } else {
+        throw Error('Not yet supported');
+      }
+    });
+    cb();
+  });
+
+  gulp.task('build:html',
+      ['build:copy', 'precompile:js', 'precompile:plovr'],
+      function (cb) {
+    goog.array.forEach(ol3ds.plovr.getHtmls(), function(htmlPath) {
+      var localHtmlPath = path.resolve('.', htmlPath);
+      var fcontent = fs.readFileSync(localHtmlPath);
+      var $ = cheerio.load(fcontent);
+      //replace links to *.plovr.json with compiled .js
+      var precompileModonPlovrPath;
+      var plovrModonJson;
+      var modonSrc;
+      var modonInfoPath;
+
+      $('script[src$=\'.plovr.json\']').each(function(i, elem) {
+          var src = $(this).attr('src');
+          var srcBasename = path.basename(src, '.plovr.json');
+          var modonPlovrPath =
+              path.join(path.dirname(src, '.plovr.json'), srcBasename)
+                + '.modon.plovr.json';
+          var localModonPlovrPath =
+              path.resolve(path.dirname(localHtmlPath), modonPlovrPath);
+          if(ol3dsCfg.buildWithModulesOn &&
+              fs.existsSync(localModonPlovrPath)) {
+            precompileModonPlovrPath =
+                ol3ds.plovr.srcToPrecompilePath(localModonPlovrPath);
+            var fcontent = fs.readFileSync(precompileModonPlovrPath);
+            plovrModonJson = JSON.parse(fcontent);
+            var moduleId = ol3ds.plovr.getMainModuleId(plovrModonJson);
+            modonInfoPath = path.basename(plovrModonJson['module-info-path']);
+            modonSrc = plovrModonJson['module-production-uri'];
+            modonSrc = modonSrc.replace('%s', moduleId);
+            src = modonSrc;
+          } else {
+            src = srcBasename+'.js';
+          }
+          $(this).attr('src', src);
+      })
+      if(plovrModonJson) {
+        var insertedScript = 
+            '<script src="'+modonInfoPath+'" type="text/javascript"></script>';
+        $('script[src=\''+modonSrc+'\']').before(insertedScript);
+      }
+      var htmlout = $.html();
+      var outPath = path.resolve('./build/client',
+          path.relative('src/client', htmlPath));
+      fs.ensureDirSync(path.dirname(outPath));
+      fs.writeFileSync(outPath, htmlout, {encoding: 'utf-8'});
+    });
+    
+    var htmls = glob.sync('build/client/**/*.html');
+    goog.array.forEach(htmls, function(htmlPath) {
+      var localHtmlPath = path.resolve('.', htmlPath);
+      var fcontent = fs.readFileSync(localHtmlPath);
+      var $ = cheerio.load(fcontent);
+      var htmlPath = path.relative('build/client', htmlPath);
+      ol3ds.absolutizePathsInHtml($, htmlPath);
+      var htmlout = $.html();
+      fs.writeFileSync(localHtmlPath, htmlout, {encoding: 'utf-8'});
+    });
+    
+    cb();
+  });
+
+  gulp.task('build:plovr',
+      ['build:copy', 'precompile:js', 'precompile:plovr'],
+      function (cb) {
+    var useMap = ol3dsCfg.generateSourceMaps;
+    var mainPlovrCfgs = ol3ds.plovr.getPrecompileMainConfigs();
+    var ncmds = mainPlovrCfgs.length;
+    if(!ncmds) {
+      cb();
+    }
+    goog.array.forEach(mainPlovrCfgs, function(pth) {
+      var modonFolder = ol3dsCfg.modulesOnFolder;
+      var withModules = goog.string.contains(pth, '.'+modonFolder+'.');
+      var modFolder = withModules ? ol3dsCfg.modulesOnFolder :
+              ol3dsCfg.modulesOffFolder;
+      var dst = path.relative('temp/'+modFolder+'/precompile/client', pth);
+      dst = path.join('build/client', dst);
+      dst = path.join(path.dirname(dst),
+          path.basename(dst, '.plovr.json'))+'.js';
+      fs.mkdirsSync(path.dirname(dst));
+      var cmd = 'java -jar bower_components/plovr/index.jar build ';
+      if(useMap) {
+        cmd += '--create_source_map ';
+        if(withModules) {
+          var fcontent = fs.readFileSync(pth);
+          var json = JSON.parse(fcontent);
+          var dstMap = path.dirname(dst) + 
+              json['module-production-uri'].replace('_%s.js', '');
+          cmd += dstMap;
+        } else {
+          cmd += dst + '.map ';
+        }
+      }
+      cmd += pth;
+      if(!withModules) {
+        cmd += ' > ' + dst;
+      }
+      exec(cmd, function(error, stdout, stderr) {
+        if(stdout) {
+          console.log('stdout', pth, error.toString());
+        }
+        if(error) {
+          cb(error);
+        } else {
+          if(useMap) {
+            var content = fs.readFileSync(dst, {encoding: 'utf-8'});
+            content += '//# sourceMappingURL='+path.basename(dst)+'.map';
+            fs.writeFileSync(dst, content, {encoding: 'utf-8'});
+          }
+          ncmds--;
+          if(!ncmds) {
+            cb();
+          }
+        }
+      });
+    });
+  });
+
+  gulp.task('build:css:min', ['build:copy'], function () {
+
+    var stream = gulp.src('src/client/**/*.css')
+        .pipe(plugins.minifyCss())
+        .pipe(gulp.dest('build/client'));
+    return stream;
+  });
+
+  gulp.task('build:css:absolutize-paths', ['build:css:min'], function (cb) {
+    var css = require('css');
+    var fpaths = glob.sync('build/client/**/*.css');
+    goog.array.forEach(fpaths, function(fpath) {
+      var fcontent = fs.readFileSync(fpath, {encoding: 'utf-8'});
+      var cssobj = css.parse(fcontent);
       
-      var findPathToReplace = function(url) {
-        return goog.array.find(urlsToReplace, function(urlToReplace) {
-          return goog.string.endsWith(url, urlToReplace.src);
+      var processRules = function(rules) {
+        goog.array.forEach(rules, function(rule) {
+          if(rule.declarations) {
+            processDeclarations(rule.declarations);
+          } else if(rule.rules) {
+            processRules(rule.rules);
+          }
         });
       };
       
-      var absBuildPath = path.resolve('.', 'build/');
-      var absSrcPath = path.resolve('.', 'src/');
-      var htmls = grunt.file.expand('src/client/**/*.html');
-      
-      goog.array.forEach(htmls, function(htmlPath) {
-        var cnt = grunt.file.read(htmlPath);
-        var pathPrefix = path.relative('src/client/', path.dirname(htmlPath));
-        var absHtmlPath = path.resolve('.', htmlPath);
-        var htmlRelPath = path.relative(absSrcPath, absHtmlPath);
-        var absBuildHtmlPath = path.join(absBuildPath, htmlRelPath);
-        var urlToReplace;
-        cnt = cnt.replace(/^(.*<(link|script).* (?:src|href)=['"])([^'"]+)(['"].*\/(\2)?>.*$)/gmi,
-            function(match, prefix, tag, url, postfix) {
-              if (url.indexOf('http://localhost:9810/compile?')==0) {
-                var plovrId = (new goog.Uri(url)).getParameterValue('id');
-                if(goog.string.caseInsensitiveEndsWith(plovrId, '-debug')) {
-                  plovrId = plovrId.substring(0, plovrId.length-6);
+      var processDeclarations = function(declarations) {
+        goog.array.forEach(declarations, function(declaration) {
+          var declval = declaration.value;
+          if(!declval) {
+            return;
+          }
+          declval = declval.replace(
+              /(^|^.* )url\(\s*(['"]?)(.+)\1\s*\)($| .*$)/gmi,
+              function(match, prefix, wrapper, srcUrl, postfix) {
+                var srcUrlObject = url.parse(srcUrl, false, true);
+                if(srcUrlObject.host) {
+                  return prefix + 'url(' + wrapper + srcUrl + wrapper + ')' +
+                      postfix;
                 }
-                var dstJs = plovrIds[plovrId];
-                dstJs = path.basename(dstJs, '.plovr.json')+'.js';
-                var result = prefix + dstJs + postfix;
-              // plovr.css
-              } else if(goog.string.endsWith(url, 'plovr.css')) {
-                result = '';
-              // references to bower_components
-              } else if((urlToReplace = findPathToReplace(url))) {
-                var filePath = path.relative(pathPrefix, urlToReplace.dest);
-                filePath = filePath.replace(/\\/g,"/");
-                result = prefix + filePath + postfix;
-              } else {
-                result = match;
+                var completePath = path.resolve(path.dirname(fpath), srcUrl);
+                var relPath = path.relative('build/client/', completePath);
+                relPath = ol3dsCfg.appPath + relPath.replace(/\\/g, '/');
+                var result = prefix + 'url(' + wrapper + relPath;
+                result += wrapper + ')' + postfix;
+                return result;
               }
-              return result;
-            });
-        var dst = htmlPath.replace('src/client/', 'build/client/');
-        fse.ensureDirSync(path.dirname(dst));
-        grunt.file.write(dst, cnt);
-      });
+          );
+          declaration.value = declval;
+        });
+      };
+      processRules(cssobj.stylesheet.rules);
       
-      goog.array.forEach(prodPlovrConfigs, function(pth) {
-        var dst = pth.replace('src/client/', 'build/client/');
-        fse.ensureDirSync(path.dirname(dst));
-      });
-      
-      
-    }
-  );
+      var cssout = css.stringify(cssobj, {compress:true});
+      fs.writeFileSync(fpath, cssout, {encoding: 'utf-8'});
+    });
 
-  
-  //taken from grunt-contrib-copy
-  var detectDestType = function(dest) {
-    if (grunt.util._.endsWith(dest, '/')) {
-      return 'directory';
-    } else {
-      return 'file';
-    }
-  };
-  var unixifyPath = function(filepath) {
-    if (process.platform === 'win32') {
-      return filepath.replace(/\\/g, '/');
-    } else {
-      return filepath;
-    }
-  };
-  //end grunt-contrib-copy
-  
-  
-  grunt.registerTask('updateBuild', ['clean:build', 'copy:fromBower', 'copy:fromSrc', 'createBuildHtml:my']);
-var buildTasks = [
-    'updateBuild',
-    'shell:buildUsingPlovr',
-    'shell:buildCss',
-    'open:build'
-  ];
-  var useMap = grunt.option('map');
-  if (useMap) {
-    buildTasks.push('addSourceMapUrl');
-  }
-  grunt.registerTask('build', buildTasks);
+    cb();
+  });
 
+  gulp.task('build:serve', ['build:plovr', 'build:css:absolutize-paths'],
+      function (cb) {
+        //run dev server 
+        var server = plugins.liveServer(
+            './src/server/build.js',
+            undefined,
+            false
+        );
+        server.start();
+
+        //restart dev server 
+        gulp.watch('./src/server/build.js', server.start.bind(server));
+
+        cb();
+      });
+
+  gulp.task('build:open', ['build:serve'],
+      function(){
+        var url = 'http://localhost:'+ol3dsCfg.port +
+            ol3dsCfg.appPath;
+        gulp.src(__filename)
+            .pipe(plugins.open({
+              uri: url
+            }));
+      });
+  
+
+  gulp.task('build', [
+    'build:clean',
+    'build:copy',
+    'build:html',
+    'build:plovr',
+    'build:css:min',
+    'build:css:absolutize-paths',
+    'build:serve',
+    'build:open'
+  ]);
 };
+

@@ -1,43 +1,70 @@
 'use strict';
 
-var fse = require('fs-extra');
-var os = require('os');
+var fs = require("fs-extra");
+var http = require("http");
 
-module.exports = function(grunt) {
-
-  grunt.config.merge({
-    curl: {
-      pip: {
-        src: 'https://bootstrap.pypa.io/get-pip.py',
-        dest: 'get-pip.py'
-      }
-    },
-    shell: {
-      installLinter: {
-        command: (os.platform() !== 'win32' ? 'sudo ' : '')
-            + 'pip install http://closure-linter.googlecode.com/files/closure_linter-latest.tar.gz --upgrade'
-      },
-      installPip: {
-        command: 'python get-pip.py'
-      },
-      createOlExt: {
-        command: 'node bower_components/ol3/tasks/build-ext.js'
-      }
-    }
-  });
-
-  require('load-grunt-tasks')(grunt);
+module.exports = function (gulp, plugins) {
+  
+  /*gulp.task('install:clean-temp', function (cb) {
+    fs.removeSync('temp/install');
+    cb();
+  });*/
 
   
-  grunt.registerTask(
-    'deletePip',
-    'Deleting pip download file',
-    function() {
-      fse.unlinkSync('get-pip.py');
-    }
-  );
+  /*gulp.task('install:pip:download', ['install:clean-temp'], function (cb) {
+    
+    fs.mkdirsSync('temp/install');
+    
+    var download = function(url, dest, cb) {
+      var file = fs.createWriteStream(dest);
+      var req = http.get(url, function(response) {
+        response.pipe(file);
+        file.on('finish', function() {
+          file.close(cb);
+        });
+      }).on('error', function(err) {
+        fs.unlinkSync(dest);
+        throw err;
+      });
+    };
+    
+    download("http://bootstrap.pypa.io/get-pip.py",
+        "temp/install/get-pip.py", cb);
+  });*/
 
-  grunt.registerTask('installPip', ['curl:pip', 'shell:installPip', 'deletePip']);
-  grunt.registerTask('install', ['installPip', 'shell:installLinter', 'shell:createOlExt']);
+  gulp.task('install:linter', /*['install:clean-temp'], */function (cb) {
+    
+    var exec = require('child_process').exec;
+ 
+    var cmd = 'python ./setup.py install';
+    
+    exec(cmd, {
+      cwd: 'bower_components/closure-linter'
+    }, function (err, stdout, stderr) {
+      //console.log(stdout);
+      //console.log(stderr);
+      cb(err);
+    });
+
+  });
+
+  gulp.task('install:create-ol-ext', function (cb) {
+    
+    var exec = require('child_process').exec;
+ 
+    var cmd = 'node bower_components/ol3/tasks/build-ext.js';
+    
+    exec(cmd, function (err, stdout, stderr) {
+      //console.log(stdout);
+      //console.log(stderr);
+      cb(err);
+    });
+
+  });
+
+
+  gulp.task('install', ['install:linter', 'install:create-ol-ext']);
 
 };
+
+

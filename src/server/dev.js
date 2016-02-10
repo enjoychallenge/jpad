@@ -1,5 +1,5 @@
 'use strict';
-require('./../bower_components/closure-library/closure/goog/bootstrap/nodejs');
+require('./../../bower_components/closure-library/closure/goog/bootstrap/nodejs');
 goog.require('goog.array');
 goog.require('goog.string');
 
@@ -8,8 +8,8 @@ var app = express();
 var path = require("path");
 var fs = require("fs-extra");
 var cheerio = require("cheerio");
-var ol3dsCfg = require('./../config.js');
-var ol3ds =  require('../tasks-gulp/util/ol3ds.js');
+var ol3dsCfg = require('./../../config.js');
+var ol3ds =  require('../../tasks/util/ol3ds.js');
 var request = require("request");
 var gulp = require('gulp');
 var gulpPlugins = require('gulp-load-plugins')();
@@ -17,7 +17,7 @@ var gulpPlugins = require('gulp-load-plugins')();
 var appPath = ol3dsCfg.appPath;
 var port = ol3dsCfg.port;
 
-require('./../tasks-gulp/dev')(gulp, gulpPlugins, ol3dsCfg);
+require('./../../tasks/dev')(gulp, gulpPlugins, ol3dsCfg);
 
 //deal with compiled JS files
 app.use('/_compile', function(req, res, next) {
@@ -31,14 +31,14 @@ app.use('/_compile', function(req, res, next) {
   var isModule = !goog.string.endsWith(req.path, '.json');
   if(!isModule) {
     var localSrcPath =
-        __dirname+'/../temp/'+modFolder+'/precompile/client'+req.path;
+        __dirname+'/../../temp/'+modFolder+'/precompile/client'+req.path;
     localSrcPath = path.normalize(localSrcPath);
     if(!fs.existsSync(localSrcPath)) {
       next();
       return;
     }
     var localDestPath =
-        __dirname+'/../temp/'+modFolder+'/compile/client'+req.path;
+        __dirname+'/../../temp/'+modFolder+'/compile/client'+req.path;
     localDestPath = path.normalize(localDestPath);
     localDestPath = path.join(
         path.dirname(localDestPath),
@@ -83,7 +83,7 @@ app.use('/_compile', function(req, res, next) {
 });
 
 goog.array.forEach(ol3dsCfg.libMappings, function(lm) {
-  var physdir = (__dirname+'/../'+lm.src).replace(/\//g, path.sep);
+  var physdir = (__dirname+'/../../'+lm.src).replace(/\//g, path.sep);
   app.use(appPath+lm.dest, express.static(physdir));
   app.use('/'+ol3dsCfg.modulesOnFolder+appPath+lm.dest,
       express.static(physdir));
@@ -95,7 +95,7 @@ var serveHtmlFiles = function(req, res, next, modulesOn) {
     res.redirect(appPath);
     return;
   }
-  var localReqPath = __dirname+'/../src/client/'+reqPath;
+  var localReqPath = __dirname+'/../../src/client/'+reqPath;
   if(fs.lstatSync(localReqPath).isDirectory()) {
     if(!goog.string.endsWith(req.path, '/')) {
       res.redirect(appPath+reqPath+'/');
@@ -115,10 +115,10 @@ var serveHtmlFiles = function(req, res, next, modulesOn) {
     var gulpTask = modulesOn ? 'htmlpathabsmodon' : 'htmlpathabsmodoff';
     gulp.start(gulpTask, function(err) {
       var precompiledPath =
-          path.relative(__dirname+'/../src/client/', localHtmlPath);
+          path.relative(__dirname+'/../../src/client/', localHtmlPath);
       var modFolder = modulesOn ? ol3dsCfg.modulesOnFolder :
           ol3dsCfg.modulesOffFolder;
-      precompiledPath = __dirname+'/../temp/'+modFolder+
+      precompiledPath = __dirname+'/../../temp/'+modFolder+
           '/precompile/client/'+precompiledPath;
       precompiledPath = path.normalize(precompiledPath);
       
@@ -143,7 +143,7 @@ var serveHtmlFiles = function(req, res, next, modulesOn) {
           } else {
             plovrPath = srcPlovrPath;
           }
-          plovrPath = path.relative(__dirname+'/../src/client/', plovrPath);
+          plovrPath = path.relative(__dirname+'/../../src/client/', plovrPath);
           plovrPath = '/_compile/'+plovrPath.replace(/\\/g, '/');
           src = plovrPath;
           $(this).attr('src', src);
@@ -168,7 +168,7 @@ app.use(appPath, function(req, res, next) {
   serveHtmlFiles(req, res, next, false);
 });
 
-var physdir = __dirname+'/../src/client/'.replace(/\//g, path.sep);
+var physdir = __dirname+'/../../src/client/'.replace(/\//g, path.sep);
 app.use(appPath, express.static(physdir, {
   redirect: true
 }));

@@ -34,7 +34,7 @@ ol3dsCfg.generateSourceMaps = !!argv.s;
 ol3dsCfg.buildWithModulesOn = !!argv.m;
 
 function loadTask(task) {
-    require('./tasks-gulp/' + task)(gulp, plugins, ol3dsCfg);
+    require('./tasks/' + task)(gulp, plugins, ol3dsCfg);
 }
 loadTask('build');
 loadTask('dev');
