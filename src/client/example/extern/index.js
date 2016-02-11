@@ -3,6 +3,7 @@ goog.provide('example.extern.index');
 goog.require('example.City');
 goog.require('goog.asserts');
 goog.require('goog.dom');
+goog.require('ol.interaction.DragBox');
 
 
 /**

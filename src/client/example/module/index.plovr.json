@@ -50,14 +50,6 @@
 
 
   "externs": [
-    "../../../../bower_components/ol3/externs/olx.js",
-    "../../../../bower_components/ol3/externs/bingmaps.js",
-    "../../../../bower_components/ol3/externs/closure-compiler.js",
-    "../../../../bower_components/ol3/externs/geojson.js",
-    "../../../../bower_components/ol3/externs/topojson.js",
-    "../../../../bower_components/ol3/externs/oli.js",
-    "../../../../bower_components/ol3/externs/proj4js.js",
-    "../../../../bower_components/ol3/externs/tilejson.js"
   ],
 
   "inputs": [
@@ -74,8 +66,6 @@
   ],
 
   "paths": [
-    "../../../../bower_components/ol3/build/ol.ext",
-    "../../../../bower_components/ol3/src",
     "../../../../bower_components/closure-library/third_party",
     "../../../client/"
   ],

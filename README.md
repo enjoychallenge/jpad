@@ -7,9 +7,11 @@ JS devstack including
 * both Linux and Windows friendly
 
 Current versions:
-* [OpenLayers](http://openlayers.org) v3.7.0
-* [Closure Library](https://github.com/google/closure-library) [v2015-02-18] (https://github.com/google/closure-library/tree/567c440d2c7f2601c970ce40bc650ad2044a77d2)
-* [plovr](https://github.com/bolinfest/plovr) 2.0.0
+* [OpenLayers](http://openlayers.org) v3.13.1
+* [Closure Library](https://github.com/google/closure-library) [v2016-01-05](https://github.com/google/closure-library/commits/fe66ad635ad3ff2bc8ee85933e4bf86bfa7523fb)
+* [Closure Compiler](https://github.com/google/closure-library) [v20151216](https://github.com/google/closure-compiler/releases/tag/v20151216)
+* [Closure Compiler](https://github.com/google/closure-library) [v20151210](https://github.com/google/closure-linter/commits/5c27529075bb88bdc45e73008f496dec8438d658)
+* [plovr](https://github.com/bolinfest/plovr) v5.0.1
 
 This repository is not officially supported by Google, ol3, or individual module authors.
 
