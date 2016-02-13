@@ -1,0 +1,6 @@
+--compilation_level ADVANCED
+--js "src/client-es6/**.js"
+--js_output_file "build/out-es6.js"
+--jscomp_error checkTypes
+--language_in ECMASCRIPT6_TYPED
+--language_out ECMASCRIPT5_STRICT

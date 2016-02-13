@@ -38,6 +38,7 @@ function loadTask(task) {
     require('./tasks/' + task)(gulp, plugins, jpadCfg);
 }
 loadTask('build');
+loadTask('build6');
 loadTask('buildcc');
 loadTask('dev');
 loadTask('devlint');
