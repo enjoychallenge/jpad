@@ -1,6 +1,8 @@
 --compilation_level ADVANCED
+--dependency_mode=STRICT
+--entry_point="src/client-es6/example/es6/main"
 --js "src/client-es6/**.js"
 --js_output_file "build/out-es6.js"
---jscomp_error checkTypes
---language_in ECMASCRIPT6_TYPED
+--language_in ECMASCRIPT6
 --language_out ECMASCRIPT5_STRICT
+--process_common_js_modules
