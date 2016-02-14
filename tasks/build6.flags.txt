@@ -5,6 +5,7 @@
 --js "bower_components/closure-library/closure/goog/string/string.js"
 --js "bower_components/closure-library/closure/goog/base.js"
 --js_output_file "build/out-es6.js"
+--jscomp_error checkTypes
 --language_in ECMASCRIPT6
 --language_out ECMASCRIPT5
 --process_common_js_modules
