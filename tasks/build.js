@@ -138,7 +138,7 @@ module.exports = function (gulp, plugins, jpadCfg) {
               json['module-production-uri'].replace('_%s.js', '');
           cmd += dstMap;
         } else {
-          cmd += dst + '.map ';
+          cmd += path.dirname(dst) + ' ';
         }
       }
       cmd += pth;
@@ -154,7 +154,8 @@ module.exports = function (gulp, plugins, jpadCfg) {
         } else {
           if(useMap) {
             var content = fs.readFileSync(dst, {encoding: 'utf-8'});
-            content += '//# sourceMappingURL='+path.basename(dst)+'.map';
+            var mapName = jpad.plovr.getSourceMapOutputName(pth);
+            content += '//# sourceMappingURL='+mapName;
             fs.writeFileSync(dst, content, {encoding: 'utf-8'});
           }
           ncmds--;

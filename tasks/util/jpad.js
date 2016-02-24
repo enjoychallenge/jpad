@@ -197,6 +197,7 @@ plovr.updatePaths = function(json, plovrSrcPath, plovrDestPath, modulesOn) {
 
 /**
  * @param {string} plovrJsonPath
+ * @return {string}
  */
 plovr.getCompilerMode = function(plovrJsonPath) {
   
@@ -214,6 +215,40 @@ plovr.getCompilerMode = function(plovrJsonPath) {
     }
   };
   return getMode(plovrJsonPath);
+};
+
+/**
+ * @param {string} plovrJsonPath
+ * @return {string}
+ */
+plovr.getSourceMapOutputName = function(plovrJsonPath) {
+  var name = plovr.getExplicitSourceMapOutputName(plovrJsonPath);
+  return name || plovr.getId(plovrJsonPath) + '.map';
+}
+  
+/**
+ * @param {string} plovrJsonPath
+ * @return {string}
+ */
+plovr.getExplicitSourceMapOutputName = function(plovrJsonPath) {
+  
+  var getName = function(pth) {
+    var fcontent = fs.readFileSync(pth);
+    var json = JSON.parse(fcontent);
+    var name = json['source-map-output-name'];
+    if(name) {
+      return name;
+    } else {
+      var inherits = json['inherits'];
+      if(inherits) {
+        var newPath = path.resolve(path.dirname(pth), inherits);
+        return getName(newPath);
+      } else {
+        return undefined;
+      }
+    }
+  };
+  return getName(plovrJsonPath);
 };
 
 /**
