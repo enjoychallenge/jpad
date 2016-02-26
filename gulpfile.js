@@ -27,8 +27,8 @@ var argv = require('yargs')
         describe: 'Compile into multiple modules.' +
             ' Related to \'build\' task only.'
     })
-    .help('h')
-    .alias('h', 'help')
+    .help('H')
+    .alias('H', 'Help')
     .argv;
 
 jpadCfg.generateSourceMaps = !!argv.s;
