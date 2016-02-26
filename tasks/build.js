@@ -170,7 +170,7 @@ module.exports = function (gulp, plugins, jpadCfg) {
   gulp.task('build:css:min', ['build:copy'], function () {
 
     var stream = gulp.src('src/client/**/*.css')
-        .pipe(plugins.minifyCss())
+        .pipe(plugins.cleanCss())
         .pipe(gulp.dest('build/client'));
     return stream;
   });
