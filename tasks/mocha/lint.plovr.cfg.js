@@ -44,6 +44,13 @@ describe('plovr configuration', function() {
           assert(fs.existsSync(inhpath));
         });
       }
+      ['css-inputs', 'css-output-file', 'css-output-format'].forEach(
+          function(tag) {
+            it('should not use "'+tag+'"', function () {
+              assert.notProperty(fjson, tag,
+                  'Use standard CSS import instead.');
+            });
+          });
     });
   });
 });
