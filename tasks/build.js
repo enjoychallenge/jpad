@@ -5,7 +5,8 @@ var url = require("url");
 var fs = require("fs-extra");
 var exec = require('child_process').exec;
 var cheerio = require("cheerio");
-var jpad =  require('../tasks/util/jpad.js');
+var jpad =  require('./util/jpad.js');
+var cssImportUpd =  require('./util/cssimportlocalupd.js');
 
 require('./../bower_components/closure-library/closure/goog/bootstrap/nodejs');
 goog.require('goog.array');
@@ -170,6 +171,7 @@ module.exports = function (gulp, plugins, jpadCfg) {
   gulp.task('build:css:min', ['build:copy'], function () {
 
     var stream = gulp.src('src/client/**/*.css')
+        .pipe(cssImportUpd())
         .pipe(plugins.cleanCss())
         .pipe(gulp.dest('build/client'));
     return stream;
@@ -207,7 +209,16 @@ module.exports = function (gulp, plugins, jpadCfg) {
                       postfix;
                 }
                 var completePath = path.resolve(path.dirname(fpath), srcUrl);
-                var relPath = path.relative('build/client/', completePath);
+                var relPath = path.relative('.', completePath);
+                relPath = relPath.replace(/\\/g, '/');
+                var lm = jpadCfg.libMappings.find(function(lm) {
+                  return relPath.indexOf(lm.src) >= 0;
+                });
+                if(lm) {
+                  relPath = lm.dest + relPath.substr(lm.src.length);
+                } else {
+                  relPath = path.relative('build/client/', completePath);
+                }
                 relPath = jpadCfg.appPath + relPath.replace(/\\/g, '/');
                 var result = prefix + 'url(' + wrapper + relPath;
                 result += wrapper + ')' + postfix;

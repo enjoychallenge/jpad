@@ -134,6 +134,49 @@ var absolutizePathsInJs = function(ast, jsPath, includeModulesOnFolder) {
   });
 };
 
+/**
+ * @param {Object} cssobj
+ * @param {string} cssPath
+ */
+var cssImportsToLocal = function(cssobj, cssPath) {
+  var processRules = function(rules) {
+    goog.array.forEach(rules, function(rule) {
+      if(rule.type == 'import') {
+        var importVal = rule.import;
+        importVal = importVal.replace(
+            /(^|^.* )url\(\s*(['"]?)(.+)\1\s*\)($| .*$)/gmi,
+            function(match, prefix, wrapper, srcUrl, postfix) {
+              var srcUrlObject = url.parse(srcUrl, false, true);
+              if(srcUrlObject.host) {
+                return prefix + 'url(' + wrapper + srcUrl + wrapper + ')' +
+                    postfix;
+              }
+              var completePath = path.resolve(path.dirname(cssPath), srcUrl);
+              var relPath = path.relative('src/client/', completePath);
+              relPath = relPath.replace(/\\/g, '/');
+              var lm = jpadCfg.libMappings.find(function(lm) {
+                return relPath.indexOf(lm.dest) >= 0;
+              });
+              if(lm) {
+                relPath = lm.src + relPath.substr(lm.dest.length);
+                relPath = path.relative(path.dirname(cssPath), relPath);
+                relPath = relPath.replace(/\\/g, '/');
+                return prefix + 'url(' + wrapper + relPath + wrapper + ')' +
+                      postfix;
+              } else {
+                return prefix + 'url(' + wrapper + srcUrl + wrapper + ')' +
+                      postfix;
+              }
+            }
+        );
+        rule.import = importVal;
+      }
+    });
+  };
+  processRules(cssobj.stylesheet.rules);
+
+};
+
 var plovr = {};
 
 /**
@@ -379,5 +422,6 @@ module.exports = {
   getDirNamesOfFile: getDirNamesOfFile,
   getNamespaceParts: getNamespaceParts,
   getFileParts: getFileParts,
+  cssImportsToLocal: cssImportsToLocal,
   plovr: plovr
 };
