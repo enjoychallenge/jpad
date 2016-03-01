@@ -42,10 +42,10 @@ Windows users: If you have some errors during `npm install` related to [node-gyp
 ## Development
 * `gulp` to run dev server and open app in the browser
   * Edit files in `src/client` and see changes in the browser
-* `gulp -h` to get more commands
+* `gulp -H` to get more commands
 
 ## Build
 * `gulp build` to compile the code and copy files to `build/`
 * `gulp build -s` to include also [source maps](https://developer.chrome.com/devtools/docs/javascript-debugging#source-maps)
-* `gulp -h` to get more commands
+* `gulp -H` to get more commands
 
