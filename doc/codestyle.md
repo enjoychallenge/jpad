@@ -57,7 +57,7 @@ TODO: Avoid duplicate sequences (by jpad linter).
 * Reference to Plovr config is done by Plovr config file name, not by `http://plovrserver/compile?id=...`
   * Inside `example.ol3.index.html` you can find `<script src="example.ol3.index.plovr.json" type="text/javascript"></script>`
 * If there is a file `*.dev.plovr.json`, it is a plovr configuration used for dev process.
-  * Do not use link to `*.dev.plovr.json` inside HTML. Use link to main `*.plovr.json` and jpad will make the replacement automatically.
+  * Do not use link to `*.dev.plovr.json` inside HTML. Use link to main `*.plovr.json` and jpad will make the replacement automatically.gu
 * Extern files (`*.externs.js`) are not precompiled, but it must be specified as externs inside `*.plovr.json`.
 * Do not use 'css-inputs' and other CSS-related properties of Plovr. Use CSS [@import](https://developer.mozilla.org/en-US/docs/Web/CSS/@import) instead.
   * **TODO: Use @import only for import CSS files from inside `src/client`**
