@@ -25,8 +25,9 @@ function htmlPathAbsolutizer(options) {
     if (file.isBuffer()) {
       var intxt = decoder.write(file.contents);
       var $ = cheerio.load(intxt);
-      jpad.absolutizePathsInHtml($, file.relative,
-          options.includeModulesOnFolder);
+      jpad.absolutizePathsInHtml($, file.relative, {
+        includeModulesOnFolder: options.includeModulesOnFolder
+      });
       var outtxt = $.html();
       file.contents = new Buffer(outtxt);
     }

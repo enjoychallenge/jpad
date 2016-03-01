@@ -102,7 +102,9 @@ module.exports = function (gulp, plugins, jpadCfg) {
       var fcontent = fs.readFileSync(localHtmlPath);
       var $ = cheerio.load(fcontent);
       var htmlPath = path.relative('build/client', htmlPath);
-      jpad.absolutizePathsInHtml($, htmlPath);
+      jpad.absolutizePathsInHtml($, htmlPath, {
+        build: true
+      });
       var htmlout = $.html();
       fs.writeFileSync(localHtmlPath, htmlout, {encoding: 'utf-8'});
     });

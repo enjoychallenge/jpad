@@ -81,9 +81,13 @@ var getFileParts = function(filePath, opt_extension) {
 
 
 /**
- * @param {type} $
+ * @param {Object} $
+ * @param {string} htmlPath
+ * @param {Object} options
  */
-var absolutizePathsInHtml = function($, htmlPath, includeModulesOnFolder) {
+var absolutizePathsInHtml = function($, htmlPath, options) {
+  var includeModulesOnFolder = !!options.includeModulesOnFolder;
+  var build = !!options.build;
   $('[href]').each(function(i, elem) {
       var href = $(this).attr('href');
       if(!(goog.string.startsWith(href, '/') ||
@@ -108,6 +112,9 @@ var absolutizePathsInHtml = function($, htmlPath, includeModulesOnFolder) {
         $(this).attr('src', src);
       }
   });
+  if(build) {
+    $('link[href$=\'/plovr.css\']').remove();
+  };
 };
 
 /**
