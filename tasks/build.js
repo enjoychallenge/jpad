@@ -203,7 +203,7 @@ module.exports = function (gulp, plugins, jpadCfg) {
             return;
           }
           declval = declval.replace(
-              /(^|^.* )url\(\s*(['"]?)(.+)\1\s*\)($| .*$)/gmi,
+              /(^|[ ,])url\(\s*(['"]?)([^'"]+)\2?\s*\)($|[ ,])/gmi,
               function(match, prefix, wrapper, srcUrl, postfix) {
                 var srcUrlObject = url.parse(srcUrl, false, true);
                 if(srcUrlObject.host) {
