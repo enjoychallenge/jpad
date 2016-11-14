@@ -12,7 +12,7 @@ Current versions:
 * OpenLayers [v3.19.1](https://github.com/openlayers/ol3/releases)
 * Closure Library [v20160713](https://github.com/google/closure-library/releases)
 * Closure Compiler [v20160713](https://github.com/google/closure-compiler/releases)
-* Closure Linter [2015-12-10](https://github.com/google/closure-linter/commits/5c27529075bb88bdc45e73008f496dec8438d658) (not installed automatically)
+* Closure Linter [2016-08-31](https://github.com/google/closure-linter/commits/1fba28acbc70a0024f68a74a922f237775260284)
 * plovr [v5.2.0](https://github.com/bolinfest/plovr/releases)
 
 This repository is not officially supported by Google, ol3, or individual module authors.

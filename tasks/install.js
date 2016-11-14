@@ -63,6 +63,6 @@ module.exports = function (gulp, plugins) {
   });
 
 
-  gulp.task('install', [/*'install:linter', */'install:create-ol-ext']);
+  gulp.task('install', ['install:linter', 'install:create-ol-ext']);
 
 };
