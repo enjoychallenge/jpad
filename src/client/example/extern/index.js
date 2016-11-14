@@ -3,7 +3,14 @@ goog.provide('example.extern.index');
 goog.require('example.City');
 goog.require('goog.asserts');
 goog.require('goog.dom');
-goog.require('ol.interaction.DragBox');
+goog.require('ol.Overlay')
+goog.require('ol.Tile');
+goog.require('ol.control.ScaleLine');
+goog.require('ol.format.IGC');
+goog.require('ol.layer.VectorTile');
+goog.require('ol.source.WMTS');
+goog.require('ol.style.Icon');
+goog.require('ol.typedefs');
 
 
 /**

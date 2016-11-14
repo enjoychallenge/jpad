@@ -35,7 +35,7 @@ example.module.dialog.Controller.prototype.init = function(callback) {
  */
 example.module.dialog.Controller.prototype.showDialog = function() {
   var dialog = new goog.ui.Dialog();
-  dialog.setContent('I am dialog from "dialog" module.');
+  dialog.setTextContent('I am dialog from "dialog" module.');
   dialog.setTitle('Hello!');
   dialog.setButtonSet(goog.ui.Dialog.ButtonSet.createYesNoCancel());
   dialog.setVisible(true);

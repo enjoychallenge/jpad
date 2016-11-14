@@ -32,14 +32,12 @@
     "uselessCode": "ERROR",
     "visibility": "ERROR"
   },
-  
+
   "closure-library": "../../../../bower_components/closure-library/closure/goog",
-  
+
   "define": {
     "goog.DEBUG": false,
     "goog.LOCALE": "cs",
-    "goog.asserts.ENABLE_ASSERTS": false,
-    "goog.dom.ASSUME_STANDARDS_MODE": true,
     "ol.ENABLE_DOM": false,
     "ol.ENABLE_IMAGE": false,
     "ol.ENABLE_VECTOR": false,
@@ -72,7 +70,7 @@
   "level": "VERBOSE",
 
   "mode": "ADVANCED",
-  
+
   "name-suffixes-to-strip": [
     "logger",
     "logger_"
@@ -83,7 +81,7 @@
     "../../../../bower_components/ol3/src",
     "../../../client/"
   ],
-  
+
   "treat-warnings-as-errors": true,
 
   "type-prefixes-to-strip": [
@@ -125,5 +123,3 @@
   ]
 
 }
-
-

@@ -1,6 +1,6 @@
 # jpad
 
-JS devstack oriented to [Google Closure](https://developers.google.com/closure/) 
+JS devstack oriented to [Google Closure](https://developers.google.com/closure/)
 * includes Google Closure [Compiler](https://github.com/google/closure-compiler), [Library](https://github.com/google/closure-library), and [Linter](https://developers.google.com/closure/utilities/docs/linter_howto)
 * ready for [advanced optimizations](https://developers.google.com/closure/compiler/docs/compilation_levels) using [plovr](https://github.com/bolinfest/plovr)
 * [OpenLayers 3](http://openlayers.org/) included, see [example](https://github.com/jirik/jpad/tree/master/src/client/example/ol3)
@@ -9,11 +9,11 @@ JS devstack oriented to [Google Closure](https://developers.google.com/closure/)
 * dev, build, lint, or fix in a single command
 
 Current versions:
-* OpenLayers [v3.13.1](https://github.com/openlayers/ol3/releases)
-* Closure Library [2016-01-05](https://github.com/google/closure-library/commits/fe66ad635ad3ff2bc8ee85933e4bf86bfa7523fb)
-* Closure Compiler [v20151216](https://github.com/google/closure-compiler/releases)
-* Closure Linter [2015-12-10](https://github.com/google/closure-linter/commits/5c27529075bb88bdc45e73008f496dec8438d658)
-* plovr [v5.0.1](https://github.com/bolinfest/plovr/releases)
+* OpenLayers [v3.19.1](https://github.com/openlayers/ol3/releases)
+* Closure Library [v20160713](https://github.com/google/closure-library/releases)
+* Closure Compiler [v20160713](https://github.com/google/closure-compiler/releases)
+* Closure Linter [2015-12-10](https://github.com/google/closure-linter/commits/5c27529075bb88bdc45e73008f496dec8438d658) (not installed automatically)
+* plovr [v5.2.0](https://github.com/bolinfest/plovr/releases)
 
 This repository is not officially supported by Google, ol3, or individual module authors.
 
@@ -48,4 +48,3 @@ Windows users: If you have some errors during `npm install` related to [node-gyp
 * `gulp build` to compile the code and copy files to `build/`
 * `gulp build -s` to include also [source maps](https://developer.chrome.com/devtools/docs/javascript-debugging#source-maps)
 * `gulp -H` to get more commands
-

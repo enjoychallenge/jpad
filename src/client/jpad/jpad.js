@@ -17,4 +17,3 @@ jpad.DEV = /* !DON'T CHANGE IT! */ false; /* !DON'T CHANGE IT! */
  * Change this variable value inside *.plovr.json.
  */
 jpad.ENABLE_MODULES = /* !DON'T CHANGE IT! */ false; /* !DON'T CHANGE IT! */
-

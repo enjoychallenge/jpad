@@ -3,12 +3,11 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "closure-compiler-src": "git://github.com/google/closure-compiler.git#v20151216",
     "closure-externs": "git://github.com/jirik/closure-externs#890dbf165f617582d1111555ac9b8ef51554ec6e",
-    "closure-library": "git://github.com/google/closure-library#fe66ad635ad3ff2bc8ee85933e4bf86bfa7523fb",
+    "closure-library": "git://github.com/google/closure-library#v20160713",
     "closure-linter": "git://github.com/google/closure-linter#5c27529075bb88bdc45e73008f496dec8438d658",
-    "ol3": "git://github.com/jirik/ol3.git#310bee06807a1ea644f9a1c94369a66add3c3817",
-    "plovr": "https://github.com/bolinfest/plovr/releases/download/v5.0.1/plovr.jar",
+    "ol3": "git://github.com/jirik/ol3.git#03c6bc29997b36ca4e2084a29c1eacbaa4c7a30a",
+    "plovr": "https://github.com/bolinfest/plovr/releases/download/v5.2.0/plovr.jar",
     "proj4js": "http://download.osgeo.org/proj4js/proj4js-1.1.0.zip"
   }
 }

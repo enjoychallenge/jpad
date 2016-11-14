@@ -1,9 +1,16 @@
 goog.provide('example.ol3.index');
 
 goog.require('ol.Map');
+goog.require('ol.Overlay')
 goog.require('ol.View');
+goog.require('ol.Tile');
+goog.require('ol.control.ScaleLine');
+goog.require('ol.format.IGC');
 goog.require('ol.layer.Tile');
 goog.require('ol.source.OSM');
+goog.require('ol.source.WMTS');
+goog.require('ol.style.Icon');
+goog.require('ol.typedefs');
 
 
 /**
